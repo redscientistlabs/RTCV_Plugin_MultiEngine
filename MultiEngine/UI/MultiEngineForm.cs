@@ -46,6 +46,7 @@ namespace MultiEngine.UI
                         var item = lbEngines.SelectedItem as MCSettingsBase;
                         Pack.RemoveSetting(item);
                         lbEngines.Items.Remove(item);
+                        LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
                         UpdateList();
                     }
                 }),
