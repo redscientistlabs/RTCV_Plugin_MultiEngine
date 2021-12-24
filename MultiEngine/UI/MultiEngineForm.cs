@@ -294,6 +294,7 @@ namespace MultiEngine.UI
                     Pack.WeightedSettings.RemoveAt(idx);
                     Pack.WeightedSettings.Insert(idx - 1, item);
                     UpdateList();
+                    LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
                     lbEngines.SelectedIndex = idx - 1;
                 }
             }
@@ -310,6 +311,7 @@ namespace MultiEngine.UI
                     Pack.WeightedSettings.RemoveAt(idx);
                     Pack.WeightedSettings.Insert(idx + 1, item);
                     UpdateList();
+                    LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
                     lbEngines.SelectedIndex = idx + 1;
                 }
             }
