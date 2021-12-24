@@ -66,7 +66,7 @@ namespace MultiEngine.Structures
             ////Corrupt here
             var last = C.GetEngineArray();
             var res = MultiEngineCore.Corrupt(last);
-            LocalNetCoreRouter.Route(PluginRouting.Endpoints.RTC_SIDE, PluginRouting.Commands.RESYNC_SETTINGS, last, true);
+            //LocalNetCoreRouter.Route(PluginRouting.Endpoints.RTC_SIDE, PluginRouting.Commands.RESYNC_SETTINGS, last, true);
             return res;
             //return UI.MultiEngineForm.InnerCorrupt(false);
 
