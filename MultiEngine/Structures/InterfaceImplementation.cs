@@ -17,7 +17,7 @@ namespace MultiEngine.Structures
     public class MultiEngine_InterfaceImplementation : ICorruptionEngine
     {
         bool ICorruptionEngine.SupportsCustomPrecision => false;
-        bool ICorruptionEngine.SupportsAutoCorrupt => true;
+        bool ICorruptionEngine.SupportsAutoCorrupt => false;
         bool ICorruptionEngine.SupportsGeneralParameters => true;
         bool ICorruptionEngine.SupportsMemoryDomains => true;
 
@@ -56,10 +56,10 @@ namespace MultiEngine.Structures
 
 
             // TODO REMOVE THIS AFTER OPTIMIZATION
-            if (S.GET<CoreForm>().AutoCorrupt)
-            {
-                S.GET<CoreForm>().AutoCorrupt = false;
-            }
+            //if (S.GET<CoreForm>().AutoCorrupt)
+            //{
+            //    S.GET<CoreForm>().AutoCorrupt = false;
+            //}
 
 
             //S.GET<StashHistoryForm>().DontLoadSelectedStash = true;
