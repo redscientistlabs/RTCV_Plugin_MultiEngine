@@ -17,14 +17,25 @@ namespace MultiEngine.UI
     public partial class MultiEngineForm : ComponentForm, IColorize
     {
 
-        MultiCorruptSettingsPack pack;
+        public static MultiCorruptSettingsPack pack
+        {
+            get
+            {
+                if (_pack == null)
+                    pack = new MultiCorruptSettingsPack();
+
+                return _pack;
+            }
+            set { _pack = value; }
+        }
+        private static MultiCorruptSettingsPack _pack = null;
 
         private static bool corrupting = false;
 
         public MultiEngineForm()
         {
             InitializeComponent();
-            pack = new MultiCorruptSettingsPack();
+            //pack = new MultiCorruptSettingsPack();
 
             ContextMenu menu = new ContextMenu(new MenuItem[]
             {
@@ -103,7 +114,7 @@ namespace MultiEngine.UI
             }
         }
 
-        private void Corrupt()
+        public void Corrupt()
         {
             
             var domains = RTCV.NetCore.AllSpec.UISpec["SELECTEDDOMAINS"] as string[];
@@ -126,7 +137,7 @@ namespace MultiEngine.UI
             S.GET<StashHistoryForm>().DontLoadSelectedStash = true;
             //Corrupt here
 
-            bool success = InnerCorrupt();
+            bool success = InnerCorrupt() != null;
 
             if (success)
             {
@@ -135,13 +146,13 @@ namespace MultiEngine.UI
         }
 
         //Split method 
-        private bool InnerCorrupt()
+        public static BlastLayer InnerCorrupt(bool fromForm = true)
         {
 
             StashKey psk = StockpileManagerUISide.CurrentSavestateStashKey;
             if (psk == null)
             {
-                return false;
+                return null;
             }
             LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.CorruptCore, RTCV.NetCore.Commands.Remote.ClearStepBlastUnits, null, true);
             LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.Vanguard, RTCV.NetCore.Commands.Remote.PreCorruptAction, null, true);
@@ -174,7 +185,7 @@ namespace MultiEngine.UI
             if (routeVal == null)
             {
                 LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.Vanguard, RTCV.NetCore.Commands.Remote.PostCorruptAction);
-                return false;
+                return null;
             }
 
             int[] usedIndices = routeVal[0] as int[];
@@ -190,17 +201,22 @@ namespace MultiEngine.UI
                 }
             }
 
-            StockpileManagerUISide.CurrentStashkey.BlastLayer = bl;
-            if (bl != null && bl.Layer.Count > 0)
+            if (fromForm)
             {
-                StockpileManagerUISide.StashHistory.Add(StockpileManagerUISide.CurrentStashkey);
+                StockpileManagerUISide.CurrentStashkey.BlastLayer = bl;
+                if (bl != null && bl.Layer.Count > 0)
+                {
+                    StockpileManagerUISide.StashHistory.Add(StockpileManagerUISide.CurrentStashkey);
+                }
+                else
+                {
+                    //throw new Exception("BL WAS NULL ON RETURN");
+                }
             }
-            else
-            {
-                //throw new Exception("BL WAS NULL ON RETURN");
-            }
+
             LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.Vanguard, RTCV.NetCore.Commands.Remote.PostCorruptAction);
-            return true;
+
+            return bl;
         }
 
         private void bAdd_Click(object sender, EventArgs e)
