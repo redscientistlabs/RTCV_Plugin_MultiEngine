@@ -64,9 +64,9 @@ namespace MultiEngine.Structures
             ClusterEngine.Direction = Direction;
         }
 
-        public override void UpdateUI(CorruptionEngineForm form)
+        public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
-            base.UpdateUI(form);
+            base.UpdateUI(form, updateSelected);
             var ce = form.ClusterEngineControl;
             ce.cbClusterMethod.SelectedIndex = ce.cbClusterMethod.Items.IndexOf(this.ShuffleType);
 

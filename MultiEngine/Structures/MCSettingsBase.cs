@@ -66,11 +66,14 @@ namespace MultiEngine.Structures
 
         }
 
-        public virtual void UpdateUI(CorruptionEngineForm form)
+        public virtual void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
-            form.cbSelectedEngine.SelectedIndex = EngineIndex;
-            form.cbCustomPrecision.SelectedIndex = PrecisionIndex;
-            form.nmAlignment.Value = Alignment;
+            if (updateSelected)
+            {
+                form.cbSelectedEngine.SelectedIndex = EngineIndex;
+                form.cbCustomPrecision.SelectedIndex = PrecisionIndex;
+                form.nmAlignment.Value = Alignment;
+            }
         }
 
         public virtual void Extract(CorruptionEngineForm form)

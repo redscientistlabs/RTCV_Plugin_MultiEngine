@@ -26,7 +26,7 @@ namespace MultiEngine.UI
         private CorruptionEngineForm mainSettings;
 
         public MCSettingsBase OutputSettings { get; private set; } = null;
-
+        MCSettingsBase edit = null;
         //private MemoryDomainsForm myDomains;
 
         public EngineSettingsForm()
@@ -40,9 +40,10 @@ namespace MultiEngine.UI
         {
             InitializeComponent();
             Setup();
+            this.edit = edit;
 
             //Add previous
-            if(edit.Domains != null && edit.Domains.Length > 0)
+            if (edit.Domains != null && edit.Domains.Length > 0)
             {
                 foreach (var item in edit.Domains)
                 {
@@ -53,46 +54,33 @@ namespace MultiEngine.UI
                 }
             }
 
-
             bAdd.Enabled = false;
             bAdd.Text = "Save";
-            Task.Run(async () =>
-            {
-                await Task.Delay(1000);
-                this.Invoke(new Action(() =>
-                {
-                    edit.UpdateUI(mySettings);
-                    bAdd.Enabled = true;
-                    nmIntensity.Value = (decimal)(edit.Percentage * 100.0);
-                    tbName.Text = edit.DisplayName ?? "";
-                    if(edit.ForcedIntensity > 0 && edit.ForcedIntensity < nmForcedIntensity.Maximum)
-                    {
-                        cbForceIntensity.Checked = true;
-                        nmForcedIntensity.Value = edit.ForcedIntensity;
-                    }
-
-                    lbMemoryDomains.ClearSelected();
-                    if (edit.Domains != null)
-                    {
-                        foreach (var dom in edit.Domains)
-                        {
-                            lbMemoryDomains.SetSelected(lbMemoryDomains.Items.IndexOf(dom), true);
-                        }
-                    }
-
-                    //myDomains.lbMemoryDomains.ClearSelected();
-                    //if (edit.Domains != null)
-                    //{
-                    //    foreach (var dom in edit.Domains)
-                    //    {
-                    //        myDomains.lbMemoryDomains.SetSelected(myDomains.lbMemoryDomains.Items.IndexOf(dom), true);
-                    //    }
-                    //}
-                }));
-
-            });
-           
+            this.Shown += EngineSettingsForm_Shown;
             //pSettings.Controls.Add(cSettings);
+        }
+
+        private async void EngineSettingsForm_Shown(object sender, EventArgs e)
+        {
+            await Task.Delay(1500);
+            edit.UpdateUI(mySettings,true);
+            bAdd.Enabled = true;
+            nmIntensity.Value = (decimal)(edit.Percentage * 100.0);
+            tbName.Text = edit.DisplayName ?? "";
+            if (edit.ForcedIntensity > 0 && edit.ForcedIntensity < nmForcedIntensity.Maximum)
+            {
+                cbForceIntensity.Checked = true;
+                nmForcedIntensity.Value = edit.ForcedIntensity;
+            }
+
+            lbMemoryDomains.ClearSelected();
+            if (edit.Domains != null)
+            {
+                foreach (var dom in edit.Domains)
+                {
+                    lbMemoryDomains.SetSelected(lbMemoryDomains.Items.IndexOf(dom), true);
+                }
+            }
         }
 
         void Setup()

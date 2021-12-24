@@ -59,9 +59,9 @@ namespace MultiEngine.Structures
         /// Do this on main settings form to apply
         /// </summary>
         /// <param name="form"></param>
-        public override void UpdateUI(CorruptionEngineForm form)
+        public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
-            base.UpdateUI(form);
+            base.UpdateUI(form, updateSelected);
             var c = form.NightmareEngineControl;
             c.cbBlastType.SelectedIndex = AlgoIndex;
             c.nmMaxValueNightmare.Value = MaxValue;

@@ -75,9 +75,9 @@ namespace MultiEngine.Structures
 
         }
 
-        public override void UpdateUI(CorruptionEngineForm form)
+        public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
-            base.UpdateUI(form);
+            base.UpdateUI(form, updateSelected);
             var c = form.HellgenieEngineControl;
             c.nmMaxValueHellgenie.Value = MaxValue;
             c.nmMinValueHellgenie.Value = MinValue;

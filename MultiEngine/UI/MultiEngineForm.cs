@@ -67,13 +67,18 @@ namespace MultiEngine.UI
                             LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
                             S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
                         }
-
                         S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
                     }
                 })
             });
 
             lbEngines.ContextMenu = menu;
+
+            imgWarning.Image = System.Drawing.SystemIcons.Warning.ToBitmap();
+            ToolTip warningToolTip = new ToolTip();
+            warningToolTip.ToolTipIcon = ToolTipIcon.Warning;
+            warningToolTip.ToolTipTitle = "Desync Warning";
+            warningToolTip.SetToolTip(imgWarning, "Using multi engine will desync other engine controls.\r\nPlease update all fields including precision and alignment if using other engines");
             FormClosing += MultiEngineForm_FormClosing;
             //cbLimiterList.DisplayMember = "Name";
             //cbValueList.DisplayMember = "Name";
@@ -118,6 +123,38 @@ namespace MultiEngine.UI
             {
                 btnCorrupt.Enabled = true;
             }
+        }
+
+        public void Resync(int[] usedIndices)
+        {
+            SyncObjectSingleton.FormExecute(() =>
+            {
+                var mainCeForm = S.GET<CorruptionEngineForm>();
+                try
+                {
+                    int finalUsed = -1;
+                    for (int i = 0; i < usedIndices.Length; i++)
+                    {
+                        if (usedIndices[i] > -1)
+                        {
+                            Pack.WeightedSettings[usedIndices[i]]?.UpdateUI(mainCeForm, false);
+                            if (usedIndices[i] > finalUsed) finalUsed = usedIndices[i];
+                        }
+                    }
+
+                    //Update these only once
+                    if (finalUsed > -1)
+                    {
+                        //mainCeForm.cbSelectedEngine.SelectedIndex = Pack.WeightedSettings[finalUsed].EngineIndex;
+                        mainCeForm.cbCustomPrecision.SelectedIndex = Pack.WeightedSettings[finalUsed].PrecisionIndex;
+                        mainCeForm.nmAlignment.Value = Pack.WeightedSettings[finalUsed].Alignment;
+                    }
+                }
+                catch (IndexOutOfRangeException ex)
+                {
+                    //bad but this is just a temp func anyway
+                }
+            });
         }
 
         public void Corrupt()

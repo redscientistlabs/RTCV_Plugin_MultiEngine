@@ -36,9 +36,9 @@ namespace MultiEngine.Structures
             Delay = (int)form.distortionEngineControl.nmDistortionDelay.Value;
         }
 
-        public override void UpdateUI(CorruptionEngineForm form)
+        public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
-            base.UpdateUI(form);
+            base.UpdateUI(form, updateSelected);
             form.distortionEngineControl.nmDistortionDelay.Value = Delay;
         }
 

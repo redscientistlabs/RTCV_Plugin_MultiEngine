@@ -23,6 +23,7 @@ namespace MultiEngine
         {
             public const string CORRUPT = PREFIX +"_"+ nameof(CORRUPT);
             public const string UPDATE_SETTINGS = PREFIX +"_"+ nameof(UPDATE_SETTINGS);
+            public const string RESYNC_SETTINGS = PREFIX +"_"+ nameof(RESYNC_SETTINGS);
         }
     }
 }

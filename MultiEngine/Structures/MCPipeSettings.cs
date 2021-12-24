@@ -25,9 +25,9 @@ namespace MultiEngine.Structures
             base.Extract(form);
         }
 
-        public override void UpdateUI(CorruptionEngineForm form)
+        public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
-            base.UpdateUI(form);
+            base.UpdateUI(form, updateSelected);
         }
 
         public override BlastUnit[] GetBlastUnits(string domain, long address, int precision, int alignment)

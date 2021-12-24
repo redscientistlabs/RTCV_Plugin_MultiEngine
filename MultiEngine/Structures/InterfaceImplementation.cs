@@ -1,6 +1,7 @@
 ﻿using Ceras;
 using RTCV.Common;
 using RTCV.CorruptCore;
+using RTCV.NetCore;
 using RTCV.UI;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,9 @@ namespace MultiEngine.Structures
             //S.GET<StashHistoryForm>().DontLoadSelectedStash = true;
             ////Corrupt here
             var last = C.GetEngineArray();
-            return MultiEngineCore.Corrupt(last);
+            var res = MultiEngineCore.Corrupt(last);
+            LocalNetCoreRouter.Route(PluginRouting.Endpoints.RTC_SIDE, PluginRouting.Commands.RESYNC_SETTINGS, last, true);
+            return res;
             //return UI.MultiEngineForm.InnerCorrupt(false);
 
             //if (success)

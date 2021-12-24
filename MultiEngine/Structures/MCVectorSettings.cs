@@ -41,9 +41,9 @@ namespace MultiEngine.Structures
             VectorEngine.LimiterListHash = LimiterListHash;
         }
 
-        public override void UpdateUI(CorruptionEngineForm form)
+        public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
-            base.UpdateUI(form);
+            base.UpdateUI(form, updateSelected);
 
             //Do first
             form.VectorEngineControl.cbVectorUnlockPrecision.Checked = UnlockPrecision;
