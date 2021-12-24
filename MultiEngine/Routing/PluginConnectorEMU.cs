@@ -34,7 +34,7 @@ namespace MultiEngine
 
                     BlastLayer bl = null;
                     bool UseSavestates = (bool)AllSpec.VanguardSpec[VSPEC.SUPPORTS_SAVESTATES];
-                    int[] lsu = C.GetEngineArray();// new int[7] { -1, -1, -1, -1, -1, -1, -1, };
+                    int[] lsu = C.GetEngineArray();
                     void a()
                     {
                         lock (loadLock)
@@ -49,14 +49,7 @@ namespace MultiEngine
                                 StockpileManagerEmuSide.LoadStateNet(sk, false);
                             }
 
-                            
-                            //7 engines
-
-                            bl = MultiEngineCore.Corrupt(lsu, pack);
-                            //Create bl here
-                            //bl = LuaEngineCore.GenerateBlastLayer(script, domains, precision, alignment, limiter, value, argsIn);
-
-                            //Apply bl
+                            bl = MultiEngineCore.Corrupt(lsu);
                             bl?.Apply(false);
                         }
                     }
@@ -77,7 +70,9 @@ namespace MultiEngine
                         e.setReturnValue(new object[] { lsu, bl });
                     }
                     break;
-
+                case PluginRouting.Commands.UPDATE_SETTINGS:
+                    MultiEngineCore.SetSettings(message.objectValue as MultiCorruptSettingsPack);
+                    break;
                 default:
                     break;
             }

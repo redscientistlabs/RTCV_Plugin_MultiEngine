@@ -22,6 +22,7 @@ namespace MultiEngine
         internal static class Commands
         {
             public const string CORRUPT = PREFIX +"_"+ nameof(CORRUPT);
+            public const string UPDATE_SETTINGS = PREFIX +"_"+ nameof(UPDATE_SETTINGS);
         }
     }
 }

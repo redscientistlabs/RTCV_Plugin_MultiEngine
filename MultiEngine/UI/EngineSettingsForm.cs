@@ -106,7 +106,6 @@ namespace MultiEngine.UI
 
             mainSettings = S.GET<CorruptionEngineForm>();
 
-            //cbEngine.SelectedIndex = 0;
             mySettings = new CorruptionEngineForm();
             mySettings.AnchorToPanel(pSettings);
             EngineSync.SyncAll(mySettings);
@@ -115,8 +114,6 @@ namespace MultiEngine.UI
             mySettings.cbSelectedEngine.SelectedIndexChanged += (o, e) => { mainSettings.cbSelectedEngine.SelectedIndex = mySettings.cbSelectedEngine.SelectedIndex; };
             mySettings.cbCustomPrecision.SelectedIndexChanged += (o, e) => { mainSettings.cbCustomPrecision.SelectedIndex = mySettings.cbCustomPrecision.SelectedIndex; };
 
-
-            //S.GET<MemoryDomainsForm>().lbMemoryDomains.Items
             lbMemoryDomains.Items.AddRange(S.GET<MemoryDomainsForm>().lbMemoryDomains.Items);
             
             //myDomains = new MemoryDomainsForm();

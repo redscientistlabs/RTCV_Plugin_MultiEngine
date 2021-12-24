@@ -63,6 +63,7 @@ namespace MultiEngine.UI
             this.btnCorrupt.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnCorrupt.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCorrupt.UseVisualStyleBackColor = false;
+            this.btnCorrupt.Visible = false;
             this.btnCorrupt.Click += new System.EventHandler(this.btnCorrupt_Click);
             // 
             // bAdd

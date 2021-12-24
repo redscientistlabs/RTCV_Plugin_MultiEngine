@@ -48,7 +48,7 @@ namespace MultiEngine.Structures
             }
 
             //Do setup on the rtc side
-            foreach (var item in UI.MultiEngineForm.pack.WeightedSettings)
+            foreach (var item in UI.MultiEngineForm.Pack.WeightedSettings)
             {
                 item.PreCorrupt();
             }
@@ -63,8 +63,9 @@ namespace MultiEngine.Structures
 
             //S.GET<StashHistoryForm>().DontLoadSelectedStash = true;
             ////Corrupt here
-
-            return UI.MultiEngineForm.InnerCorrupt(false);
+            var last = C.GetEngineArray();
+            return MultiEngineCore.Corrupt(last);
+            //return UI.MultiEngineForm.InnerCorrupt(false);
 
             //if (success)
             //{

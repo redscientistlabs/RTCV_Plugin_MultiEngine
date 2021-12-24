@@ -17,12 +17,12 @@ namespace MultiEngine.UI
     public partial class MultiEngineForm : ComponentForm, IColorize
     {
 
-        public static MultiCorruptSettingsPack pack
+        public static MultiCorruptSettingsPack Pack
         {
             get
             {
                 if (_pack == null)
-                    pack = new MultiCorruptSettingsPack();
+                    Pack = new MultiCorruptSettingsPack();
 
                 return _pack;
             }
@@ -44,7 +44,7 @@ namespace MultiEngine.UI
                     if(lbEngines.SelectedItem != null)
                     {
                         var item = lbEngines.SelectedItem as MCSettingsBase;
-                        pack.RemoveSetting(item);
+                        Pack.RemoveSetting(item);
                         lbEngines.Items.Remove(item);
                         UpdateList();
                     }
@@ -55,14 +55,19 @@ namespace MultiEngine.UI
                     {
                         var item = lbEngines.SelectedItem as MCSettingsBase;
                         var esf = new EngineSettingsForm(item);
+                        int multiEngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
+
                         if (esf.ShowDialog() == DialogResult.OK)
                         {
-                            int idx = pack.WeightedSettings.IndexOf(item);
-                            pack.WeightedSettings.RemoveAt(idx);
-                            pack.WeightedSettings.Insert(idx, esf.OutputSettings);
+                            int idx = Pack.WeightedSettings.IndexOf(item);
+                            Pack.WeightedSettings.RemoveAt(idx);
+                            Pack.WeightedSettings.Insert(idx, esf.OutputSettings);
                             UpdateList();
+                            LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
                             S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
                         }
+
+                        S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
                     }
                 })
             });
@@ -95,7 +100,7 @@ namespace MultiEngine.UI
             btnCorrupt.Enabled = false;
             try
             {
-                if (!corrupting && pack.WeightedSettings.Count > 0)
+                if (!corrupting && Pack.WeightedSettings.Count > 0)
                 {
                     try
                     {
@@ -125,7 +130,7 @@ namespace MultiEngine.UI
             }
 
             //Do setup on the rtc side
-            foreach (var item in pack.WeightedSettings)
+            foreach (var item in Pack.WeightedSettings)
             {
                 item.PreCorrupt();
             }
@@ -180,7 +185,7 @@ namespace MultiEngine.UI
             object[] routeVal = (object[])LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.CORRUPT,
                new object[] {
                     StockpileManagerUISide.CurrentStashkey,
-                    pack
+                    Pack
                }, true);
             if (routeVal == null)
             {
@@ -197,7 +202,7 @@ namespace MultiEngine.UI
             {
                 if (usedIndices[i] > -1)
                 {
-                    pack.WeightedSettings[usedIndices[i]]?.UpdateUI(ceForm);
+                    Pack.WeightedSettings[usedIndices[i]]?.UpdateUI(ceForm);
                 }
             }
 
@@ -215,19 +220,21 @@ namespace MultiEngine.UI
             }
 
             LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.Vanguard, RTCV.NetCore.Commands.Remote.PostCorruptAction);
-
             return bl;
         }
 
         private void bAdd_Click(object sender, EventArgs e)
         {
             var f = new EngineSettingsForm();
+            int multiEngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
             if (f.ShowDialog() == DialogResult.OK)
             {
-                pack.AddSetting(f.OutputSettings);
+                Pack.AddSetting(f.OutputSettings);
                 UpdateList();
+                LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
                 S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
             }
+            S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
         }
 
         void UpdateList()
@@ -235,9 +242,9 @@ namespace MultiEngine.UI
             lbEngines.SuspendLayout();
             lbEngines.Items.Clear();
 
-            for (int i = 0; i < pack.WeightedSettings.Count; i++)
+            for (int i = 0; i < Pack.WeightedSettings.Count; i++)
             {
-                lbEngines.Items.Add(pack.WeightedSettings[i]);
+                lbEngines.Items.Add(Pack.WeightedSettings[i]);
             }
             lbEngines.ResumeLayout();
         }
@@ -250,7 +257,7 @@ namespace MultiEngine.UI
                 {
                     try
                     {
-                        string json = JsonHelper.Serialize(pack);
+                        string json = JsonHelper.Serialize(Pack);
                         File.WriteAllText(sfd.FileName, json);
                     }
                     catch (Exception ex)
@@ -267,9 +274,9 @@ namespace MultiEngine.UI
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-
-                    pack = JsonConvert.DeserializeObject<MultiCorruptSettingsPack>(File.ReadAllText(ofd.FileName), new MultiEngineJsonConverter());
+                    Pack = JsonConvert.DeserializeObject<MultiCorruptSettingsPack>(File.ReadAllText(ofd.FileName), new MultiEngineJsonConverter());
                     UpdateList();
+                    LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
                 }
             }
 
@@ -282,9 +289,9 @@ namespace MultiEngine.UI
                 var idx = lbEngines.SelectedIndex;
                 if (idx > 0)
                 {
-                    var item = pack.WeightedSettings[idx];
-                    pack.WeightedSettings.RemoveAt(idx);
-                    pack.WeightedSettings.Insert(idx - 1, item);
+                    var item = Pack.WeightedSettings[idx];
+                    Pack.WeightedSettings.RemoveAt(idx);
+                    Pack.WeightedSettings.Insert(idx - 1, item);
                     UpdateList();
                     lbEngines.SelectedIndex = idx - 1;
                 }
@@ -298,9 +305,9 @@ namespace MultiEngine.UI
                 var idx = lbEngines.SelectedIndex;
                 if (idx < (lbEngines.Items.Count-1))
                 {
-                    var item = pack.WeightedSettings[idx];
-                    pack.WeightedSettings.RemoveAt(idx);
-                    pack.WeightedSettings.Insert(idx + 1, item);
+                    var item = Pack.WeightedSettings[idx];
+                    Pack.WeightedSettings.RemoveAt(idx);
+                    Pack.WeightedSettings.Insert(idx + 1, item);
                     UpdateList();
                     lbEngines.SelectedIndex = idx + 1;
                 }

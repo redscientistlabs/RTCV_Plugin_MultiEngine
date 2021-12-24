@@ -14,15 +14,18 @@ namespace MultiEngine
 {
     static class MultiEngineCore
     {
-        public static BlastLayer Corrupt(int[] lastUsedIndices, MultiCorruptSettingsPack pack)
+        static MultiCorruptSettingsPack pack = null;
+
+        public static void SetSettings(MultiCorruptSettingsPack settingPack)
         {
-            
-            //string[] domains = (string[])AllSpec.UISpec["SELECTEDDOMAINS"];
-            //if(domains.Length == 0)
-            //{
-            //    return null;
-            //}
+            pack = settingPack;
+        }
+
+        public static BlastLayer Corrupt(int[] lastUsedIndices)
+        {
             List<BlastUnit> bus = new List<BlastUnit>();
+            if (pack == null) return new BlastLayer(bus);
+
             for (int settingInd = 0; settingInd < pack.WeightedSettings.Count; settingInd++)
             {
                 var setting = pack.WeightedSettings[settingInd];
