@@ -37,6 +37,9 @@ namespace MultiEngine.UI
             this.bLoad = new System.Windows.Forms.Button();
             this.bUp = new System.Windows.Forms.Button();
             this.bDown = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCorrupt
@@ -49,15 +52,14 @@ namespace MultiEngine.UI
             this.btnCorrupt.ForeColor = System.Drawing.Color.OrangeRed;
             this.btnCorrupt.Image = ((System.Drawing.Image)(resources.GetObject("btnCorrupt.Image")));
             this.btnCorrupt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCorrupt.Location = new System.Drawing.Point(12, 6);
+            this.btnCorrupt.Location = new System.Drawing.Point(377, 12);
             this.btnCorrupt.Margin = new System.Windows.Forms.Padding(4);
             this.btnCorrupt.Name = "btnCorrupt";
             this.btnCorrupt.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
-            this.btnCorrupt.Size = new System.Drawing.Size(122, 39);
+            this.btnCorrupt.Size = new System.Drawing.Size(35, 16);
             this.btnCorrupt.TabIndex = 152;
             this.btnCorrupt.TabStop = false;
             this.btnCorrupt.Tag = "color:dark2";
-            this.btnCorrupt.Text = "Corrupt";
             this.btnCorrupt.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnCorrupt.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCorrupt.UseVisualStyleBackColor = false;
@@ -71,9 +73,9 @@ namespace MultiEngine.UI
             this.bAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bAdd.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.bAdd.ForeColor = System.Drawing.Color.White;
-            this.bAdd.Location = new System.Drawing.Point(12, 59);
+            this.bAdd.Location = new System.Drawing.Point(12, 36);
             this.bAdd.Name = "bAdd";
-            this.bAdd.Size = new System.Drawing.Size(122, 39);
+            this.bAdd.Size = new System.Drawing.Size(122, 59);
             this.bAdd.TabIndex = 158;
             this.bAdd.TabStop = false;
             this.bAdd.Tag = "color:light1";
@@ -92,9 +94,9 @@ namespace MultiEngine.UI
             this.lbEngines.FormattingEnabled = true;
             this.lbEngines.HorizontalScrollbar = true;
             this.lbEngines.IntegralHeight = false;
-            this.lbEngines.Location = new System.Drawing.Point(140, 6);
+            this.lbEngines.Location = new System.Drawing.Point(140, 36);
             this.lbEngines.Name = "lbEngines";
-            this.lbEngines.Size = new System.Drawing.Size(228, 134);
+            this.lbEngines.Size = new System.Drawing.Size(236, 100);
             this.lbEngines.TabIndex = 160;
             this.lbEngines.Tag = "color:dark2";
             // 
@@ -106,7 +108,7 @@ namespace MultiEngine.UI
             this.bSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bSave.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.bSave.ForeColor = System.Drawing.Color.White;
-            this.bSave.Location = new System.Drawing.Point(12, 104);
+            this.bSave.Location = new System.Drawing.Point(12, 101);
             this.bSave.Name = "bSave";
             this.bSave.Size = new System.Drawing.Size(58, 35);
             this.bSave.TabIndex = 163;
@@ -124,7 +126,7 @@ namespace MultiEngine.UI
             this.bLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bLoad.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.bLoad.ForeColor = System.Drawing.Color.White;
-            this.bLoad.Location = new System.Drawing.Point(76, 104);
+            this.bLoad.Location = new System.Drawing.Point(76, 101);
             this.bLoad.Name = "bLoad";
             this.bLoad.Size = new System.Drawing.Size(58, 35);
             this.bLoad.TabIndex = 164;
@@ -142,9 +144,9 @@ namespace MultiEngine.UI
             this.bUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bUp.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.bUp.ForeColor = System.Drawing.Color.White;
-            this.bUp.Location = new System.Drawing.Point(374, 8);
+            this.bUp.Location = new System.Drawing.Point(382, 36);
             this.bUp.Name = "bUp";
-            this.bUp.Size = new System.Drawing.Size(34, 37);
+            this.bUp.Size = new System.Drawing.Size(25, 44);
             this.bUp.TabIndex = 165;
             this.bUp.TabStop = false;
             this.bUp.Tag = "color:light1";
@@ -160,9 +162,9 @@ namespace MultiEngine.UI
             this.bDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bDown.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.bDown.ForeColor = System.Drawing.Color.White;
-            this.bDown.Location = new System.Drawing.Point(374, 51);
+            this.bDown.Location = new System.Drawing.Point(382, 86);
             this.bDown.Name = "bDown";
-            this.bDown.Size = new System.Drawing.Size(34, 35);
+            this.bDown.Size = new System.Drawing.Size(26, 50);
             this.bDown.TabIndex = 166;
             this.bDown.TabStop = false;
             this.bDown.Tag = "color:light1";
@@ -170,29 +172,51 @@ namespace MultiEngine.UI
             this.bDown.UseVisualStyleBackColor = false;
             this.bDown.Click += new System.EventHandler(this.bDown_Click);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label14);
+            this.groupBox1.Controls.Add(this.bAdd);
+            this.groupBox1.Controls.Add(this.btnCorrupt);
+            this.groupBox1.Controls.Add(this.bDown);
+            this.groupBox1.Controls.Add(this.bSave);
+            this.groupBox1.Controls.Add(this.bUp);
+            this.groupBox1.Controls.Add(this.bLoad);
+            this.groupBox1.Controls.Add(this.lbEngines);
+            this.groupBox1.Location = new System.Drawing.Point(0, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(420, 148);
+            this.groupBox1.TabIndex = 167;
+            this.groupBox1.TabStop = false;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic);
+            this.label14.ForeColor = System.Drawing.Color.White;
+            this.label14.Location = new System.Drawing.Point(168, 12);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(172, 13);
+            this.label14.TabIndex = 167;
+            this.label14.Text = "Combine multiple engines together";
+            // 
             // MultiEngineForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(420, 151);
-            this.Controls.Add(this.bDown);
-            this.Controls.Add(this.bUp);
-            this.Controls.Add(this.bLoad);
-            this.Controls.Add(this.bSave);
-            this.Controls.Add(this.lbEngines);
-            this.Controls.Add(this.bAdd);
-            this.Controls.Add(this.btnCorrupt);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(440, 194);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(440, 194);
+            this.MinimumSize = new System.Drawing.Size(420, 151);
             this.Name = "MultiEngineForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Tag = "color:normal";
+            this.Tag = "color:dark1";
             this.Text = "Multi Engine";
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -206,5 +230,7 @@ namespace MultiEngine.UI
         private System.Windows.Forms.Button bLoad;
         private System.Windows.Forms.Button bUp;
         private System.Windows.Forms.Button bDown;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label14;
     }
 }

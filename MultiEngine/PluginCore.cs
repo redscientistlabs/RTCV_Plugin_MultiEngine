@@ -40,6 +40,16 @@ namespace MultiEngine
             else if (side == RTCSide.Server)
             {
                 connectorRTC = new PluginConnectorRTC();
+
+                var form = new MultiEngineForm();
+                S.SET<MultiEngineForm>(form);
+                form.TopLevel = false;
+
+                S.GET<CorruptionEngineForm>().RegisterPluginEngine(new Structures.MultiEngine_InterfaceImplementation(form));
+
+                //form.Activate();
+
+                /*
                 S.GET<OpenToolsForm>().RegisterTool("Multi Engine", "Multi Engine", () =>
                 {
                     var form = new MultiEngineForm();
@@ -47,6 +57,8 @@ namespace MultiEngine
                     form.Show();
                     form.Activate();
                 });
+                */
+
             }
             CurrentSide = side;
             return true;
