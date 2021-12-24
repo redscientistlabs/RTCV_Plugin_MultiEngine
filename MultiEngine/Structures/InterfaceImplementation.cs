@@ -78,5 +78,16 @@ namespace MultiEngine.Structures
 
 
         string ICorruptionEngine.ToString() => control?.ToString();
+
+        void ICorruptionEngine.OnSelect()
+        {
+            //do nothing
+        }
+
+        void ICorruptionEngine.OnDeselect()
+        {
+            //resync other engines
+            S.GET<CorruptionEngineForm>().ResyncAllEngines();
+        }
     }
 }
