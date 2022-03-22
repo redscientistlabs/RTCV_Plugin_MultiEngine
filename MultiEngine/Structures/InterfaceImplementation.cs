@@ -1,4 +1,5 @@
 ﻿using Ceras;
+using MultiEngine.UI;
 using RTCV.Common;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
@@ -16,8 +17,8 @@ namespace MultiEngine.Structures
     [Ceras.MemberConfig(TargetMember.All)]
     public class MultiEngine_InterfaceImplementation : ICorruptionEngine
     {
-        bool ICorruptionEngine.SupportsCustomPrecision => false;
-        bool ICorruptionEngine.SupportsAutoCorrupt => false;
+        bool ICorruptionEngine.SupportsCustomPrecision => true;
+        bool ICorruptionEngine.SupportsAutoCorrupt => true;
         bool ICorruptionEngine.SupportsGeneralParameters => true;
         bool ICorruptionEngine.SupportsMemoryDomains => true;
 
@@ -40,6 +41,9 @@ namespace MultiEngine.Structures
 
         BlastLayer ICorruptionEngine.GetBlastLayer(long intensity)
         {
+            //Cache spec
+            PartialSpec pspec = AllSpec.CorruptCoreSpec.GetPartialSpec();
+            var precision = RtcCore.CurrentPrecision;
 
             var domains = RTCV.NetCore.AllSpec.UISpec["SELECTEDDOMAINS"] as string[];
             if (domains == null || domains.Length == 0)
@@ -49,10 +53,10 @@ namespace MultiEngine.Structures
             }
 
             //Do setup on the rtc side
-            foreach (var item in UI.MultiEngineForm.Pack.WeightedSettings)
-            {
-                item.PreCorrupt();
-            }
+            //foreach (var item in UI.MultiEngineForm.Pack.WeightedSettings)
+            //{
+            //    item.PreCorrupt();
+            //}
 
 
             // TODO REMOVE THIS AFTER OPTIMIZATION
@@ -66,6 +70,10 @@ namespace MultiEngine.Structures
             ////Corrupt here
             var last = C.GetEngineArray();
             var res = MultiEngineCore.Corrupt(last);
+
+            //Revert entire spec on this side
+            AllSpec.CorruptCoreSpec.Update(pspec,false,false);
+            RtcCore.CurrentPrecision = precision;
             //LocalNetCoreRouter.Route(PluginRouting.Endpoints.RTC_SIDE, PluginRouting.Commands.RESYNC_SETTINGS, last, true);
             return res;
             //return UI.MultiEngineForm.InnerCorrupt(false);
@@ -81,13 +89,14 @@ namespace MultiEngine.Structures
 
         void ICorruptionEngine.OnSelect()
         {
-            //do nothing
+            S.GET<MultiEngineForm>().OnEngineSelected();
         }
 
         void ICorruptionEngine.OnDeselect()
         {
+            S.GET<MultiEngineForm>().OnEngineDeselected();
             //resync other engines
-            S.GET<CorruptionEngineForm>().ResyncAllEngines();
+            //S.GET<CorruptionEngineForm>().ResyncAllEngines();
         }
     }
 }

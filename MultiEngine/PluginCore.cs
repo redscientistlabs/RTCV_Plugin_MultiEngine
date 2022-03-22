@@ -17,7 +17,7 @@ namespace MultiEngine
 
         public string Author => "NullShock78";
 
-        public Version Version => new Version(0, 0, 1);
+        public Version Version => new Version(1, 0, 0);
 
         /// <summary>
         /// Defines which sides will call Start

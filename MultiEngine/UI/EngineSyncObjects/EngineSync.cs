@@ -15,7 +15,7 @@ namespace MultiEngine.UI
     /// </summary>
     public static class EngineSync
     {
-
+        [Obsolete]
         public static void SyncAll(CorruptionEngineForm form)
         {
             SyncNightmare(form.NightmareEngineControl);
@@ -23,7 +23,7 @@ namespace MultiEngine.UI
             SyncHellgenie(form.HellgenieEngineControl);
             SyncPipe(form.PipeEngineControl);
             //Freeze doesn't need extra sync
-            SyncDistortion(form.distortionEngineControl);
+            SyncDistortion(form.DistortionEngineControl);
             SyncCluster(form.ClusterEngineControl);
         }
 
@@ -61,7 +61,7 @@ namespace MultiEngine.UI
         static void SyncDistortion(DistortionEngineControl ctrl)
         {
             var ceForm = S.GET<CorruptionEngineForm>();
-            ctrl.nmDistortionDelay.ValueChanged += (o, e) => ceForm.distortionEngineControl.nmDistortionDelay.Value = ctrl.nmDistortionDelay.Value;
+            ctrl.nmDistortionDelay.ValueChanged += (o, e) => ceForm.DistortionEngineControl.nmDistortionDelay.Value = ctrl.nmDistortionDelay.Value;
         }
 
         static void SyncCluster(ClusterEngineControl ctrl)

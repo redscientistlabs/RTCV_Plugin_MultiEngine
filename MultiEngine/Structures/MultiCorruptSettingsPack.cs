@@ -33,12 +33,12 @@ namespace MultiEngine.Structures
         public void AddSetting(MCSettingsBase setting)
         {
             WeightedSettings.Add(setting);
-            RatioSum = WeightedSettings.Sum(p => p.Weight);
+            //RatioSum = WeightedSettings.Sum(p => p.Weight);
         }
         public void RemoveSetting(MCSettingsBase setting)
         {
             WeightedSettings.Remove(setting);
-            RatioSum = WeightedSettings.Sum(p => p.Weight);
+           // RatioSum = WeightedSettings.Sum(p => p.Weight);
         }
 
         /// <summary>

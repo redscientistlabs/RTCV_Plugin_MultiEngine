@@ -7,6 +7,7 @@ using Ceras;
 using Newtonsoft.Json;
 using RTCV.Common;
 using RTCV.CorruptCore;
+using RTCV.NetCore;
 using RTCV.UI;
 using RTCV.UI.Components.EngineConfig.EngineControls;
 
@@ -16,30 +17,38 @@ namespace MultiEngine.Structures
     [Ceras.MemberConfig(TargetMember.All)]
     class MCDistortionSettings : MCSettingsBase
     {
-        [JsonProperty]
-        public int Delay { get; private set; }
+        //[JsonProperty]
+        public int Delay => CachedSpec.Get<int>(RTCSPEC.DISTORTION_DELAY);
 
         public MCDistortionSettings() : base()
         {
 
         }
 
-        public override void Apply()
+        //public override void Apply()
+        //{
+        //    PartialSpec partial = CreateBaseUpdateSpec();
+        //    partial[RTCSPEC.DISTORTION_DELAY] = Delay;
+        //    AllSpec.CorruptCoreSpec.Update(partial);
+        //    //DistortionEngine.Delay = Delay;
+        //}
+
+        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
         {
-            base.Apply();
-            DistortionEngine.Delay = Delay;
+            partial.Insert(DistortionEngine.getDefaultPartial());
+            return partial;
         }
 
         public override void Extract(CorruptionEngineForm form)
         {
+            //Delay = (int)form.DistortionEngineControl.nmDistortionDelay.Value;
             base.Extract(form);
-            Delay = (int)form.distortionEngineControl.nmDistortionDelay.Value;
         }
 
         public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
             base.UpdateUI(form, updateSelected);
-            form.distortionEngineControl.nmDistortionDelay.Value = Delay;
+            form.DistortionEngineControl.nmDistortionDelay.Value = Delay;
         }
 
         public override BlastUnit[] GetBlastUnits(string domain, long address, int precision, int alignment)

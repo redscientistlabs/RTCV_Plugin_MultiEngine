@@ -1,8 +1,10 @@
-﻿using MultiEngine.Structures;
+﻿using Ceras;
+using MultiEngine.Structures;
 using Newtonsoft.Json;
 using RTCV.Common;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
+using RTCV.NetCore.NetCoreExtensions;
 using RTCV.UI;
 using RTCV.UI.Modular;
 using System;
@@ -32,10 +34,18 @@ namespace MultiEngine.UI
 
         private static bool corrupting = false;
 
+        private static CerasSerializer saveSerializer;
+
+        private PartialSpec masterSpec = null;
+
+        private CorruptionEngineForm originalEngineForm = null;
+
         public MultiEngineForm()
         {
             InitializeComponent();
             //pack = new MultiCorruptSettingsPack();
+            saveSerializer = CreateSerializer();
+            InitMasterSpec();
 
             ContextMenu menu = new ContextMenu(new MenuItem[]
             {
@@ -46,7 +56,7 @@ namespace MultiEngine.UI
                         var item = lbEngines.SelectedItem as MCSettingsBase;
                         Pack.RemoveSetting(item);
                         lbEngines.Items.Remove(item);
-                        LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
+                        PushSettings();
                         UpdateList();
                     }
                 }),
@@ -54,6 +64,7 @@ namespace MultiEngine.UI
                 {
                     if(lbEngines.SelectedItem != null)
                     {
+                        gbMain.Enabled = false;
                         var item = lbEngines.SelectedItem as MCSettingsBase;
                         var esf = new EngineSettingsForm(item);
                         int multiEngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
@@ -64,14 +75,15 @@ namespace MultiEngine.UI
                             Pack.WeightedSettings.RemoveAt(idx);
                             Pack.WeightedSettings.Insert(idx, esf.OutputSettings);
                             UpdateList();
-                            LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
+                            PushSettings();
                             S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
                         }
+                        gbMain.Enabled = true;
                         S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
                     }
                 })
             });
-
+            originalEngineForm = S.GET<CorruptionEngineForm>();
             lbEngines.ContextMenu = menu;
 
             imgWarning.Image = System.Drawing.SystemIcons.Warning.ToBitmap();
@@ -86,11 +98,31 @@ namespace MultiEngine.UI
             //cbValueList.DataSource = RTCV.CorruptCore.RtcCore.ValueListBindingSource;
         }
 
+        private void InitMasterSpec()
+        {
+            masterSpec = new PartialSpec(C.SPEC_NAME);
+            //masterSpec[RTCSPEC.CORE_INTENSITY] = RtcCore.Intensity;
+            masterSpec[RTCSPEC.CORE_CURRENTALIGNMENT] = RtcCore.Alignment;
+            masterSpec[RTCSPEC.CORE_CURRENTPRECISION] = RtcCore.CurrentPrecision;
+            masterSpec.Insert(NightmareEngine.getDefaultPartial());
+            masterSpec.Insert(HellgenieEngine.getDefaultPartial());
+            masterSpec.Insert(DistortionEngine.getDefaultPartial());
+            masterSpec.Insert(VectorEngine.getDefaultPartial());
+            masterSpec.Insert(ClusterEngine.getDefaultPartial());
+        }
+
+        private void PushSettings()
+        {
+            LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
+        }
+
         private void MultiEngineForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             corrupting = false;
         }
 
+        //Todo: remove
+        [Obsolete]
         private void btnCorrupt_Click(object sender, EventArgs e)
         {
             //Corrupt();
@@ -111,7 +143,7 @@ namespace MultiEngine.UI
                     try
                     {
                         corrupting = true;
-                        Corrupt();
+                        //Corrupt();
                     }
                     finally
                     {
@@ -125,153 +157,28 @@ namespace MultiEngine.UI
             }
         }
 
-        public void Resync(int[] usedIndices)
-        {
-            SyncObjectSingleton.FormExecute(() =>
-            {
-                var mainCeForm = S.GET<CorruptionEngineForm>();
-                try
-                {
-                    int finalUsed = -1;
-                    for (int i = 0; i < usedIndices.Length; i++)
-                    {
-                        if (usedIndices[i] > -1)
-                        {
-                            Pack.WeightedSettings[usedIndices[i]]?.UpdateUI(mainCeForm, false);
-                            if (usedIndices[i] > finalUsed) finalUsed = usedIndices[i];
-                        }
-                    }
-
-                    //Update these only once
-                    if (finalUsed > -1)
-                    {
-                        //mainCeForm.cbSelectedEngine.SelectedIndex = Pack.WeightedSettings[finalUsed].EngineIndex;
-                        mainCeForm.cbCustomPrecision.SelectedIndex = Pack.WeightedSettings[finalUsed].PrecisionIndex;
-                        mainCeForm.nmAlignment.Value = Pack.WeightedSettings[finalUsed].Alignment;
-                    }
-                }
-                catch (IndexOutOfRangeException ex)
-                {
-                    //bad but this is just a temp func anyway
-                }
-            });
-        }
-
-        public void Corrupt()
-        {
-            
-            var domains = RTCV.NetCore.AllSpec.UISpec["SELECTEDDOMAINS"] as string[];
-            if (domains == null || domains.Length == 0)
-            {
-                MessageBox.Show("Can't corrupt with no domains selected.");
-                return;
-            }
-
-            //Do setup on the rtc side
-            foreach (var item in Pack.WeightedSettings)
-            {
-                item.PreCorrupt();
-            }
-
-            if (S.GET<CoreForm>().AutoCorrupt)
-            {
-                S.GET<CoreForm>().AutoCorrupt = false;
-            }
-            S.GET<StashHistoryForm>().DontLoadSelectedStash = true;
-            //Corrupt here
-
-            bool success = InnerCorrupt() != null;
-
-            if (success)
-            {
-                S.GET<StashHistoryForm>().RefreshStashHistorySelectLast();
-            }
-        }
-
-        //Split method 
-        public static BlastLayer InnerCorrupt(bool fromForm = true)
-        {
-
-            StashKey psk = StockpileManagerUISide.CurrentSavestateStashKey;
-            if (psk == null)
-            {
-                return null;
-            }
-            LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.CorruptCore, RTCV.NetCore.Commands.Remote.ClearStepBlastUnits, null, true);
-            LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.Vanguard, RTCV.NetCore.Commands.Remote.PreCorruptAction, null, true);
-            
-            string currentGame = (string)RTCV.NetCore.AllSpec.VanguardSpec[VSPEC.GAMENAME];
-            string currentCore = (string)RTCV.NetCore.AllSpec.VanguardSpec[VSPEC.SYSTEMCORE];
-            bool UseSavestates = (bool)AllSpec.VanguardSpec[VSPEC.SUPPORTS_SAVESTATES];
-            if (UseSavestates && (currentGame == null || psk.GameName != currentGame || psk.SystemCore != currentCore))
-            {
-                LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.Vanguard, RTCV.NetCore.Commands.Remote.LoadROM, psk.RomFilename, true);
-            }
-            //LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.CorruptCore, "NULLS TEST AFTER LOADROM", null, true);
-            StockpileManagerUISide.CurrentStashkey = new StashKey(RtcCore.GetRandomKey(), psk.ParentKey, null)
-            {
-                RomFilename = psk.RomFilename,
-                SystemName = psk.SystemName,
-                SystemCore = psk.SystemCore,
-                GameName = psk.GameName,
-                SyncSettings = psk.SyncSettings,
-                StateLocation = psk.StateLocation
-            };
-
-            //Get blast layer
-
-            object[] routeVal = (object[])LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.CORRUPT,
-               new object[] {
-                    StockpileManagerUISide.CurrentStashkey,
-                    Pack
-               }, true);
-            if (routeVal == null)
-            {
-                LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.Vanguard, RTCV.NetCore.Commands.Remote.PostCorruptAction);
-                return null;
-            }
-
-            int[] usedIndices = routeVal[0] as int[];
-            BlastLayer bl = routeVal[1] as BlastLayer;
-
-            //Update main ui values to keep synced settings
-            var ceForm = S.GET<CorruptionEngineForm>();
-            for (int i = 0; i < usedIndices.Length; i++)
-            {
-                if (usedIndices[i] > -1)
-                {
-                    Pack.WeightedSettings[usedIndices[i]]?.UpdateUI(ceForm);
-                }
-            }
-
-            if (fromForm)
-            {
-                StockpileManagerUISide.CurrentStashkey.BlastLayer = bl;
-                if (bl != null && bl.Layer.Count > 0)
-                {
-                    StockpileManagerUISide.StashHistory.Add(StockpileManagerUISide.CurrentStashkey);
-                }
-                else
-                {
-                    //throw new Exception("BL WAS NULL ON RETURN");
-                }
-            }
-
-            LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.Vanguard, RTCV.NetCore.Commands.Remote.PostCorruptAction);
-            return bl;
-        }
-
         private void bAdd_Click(object sender, EventArgs e)
         {
+            //Cache before changes
+            //PartialSpec pspec = AllSpec.CorruptCoreSpec.GetPartialSpec();
             var f = new EngineSettingsForm();
             int multiEngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
+            gbMain.Enabled = false;
             if (f.ShowDialog() == DialogResult.OK)
             {
                 Pack.AddSetting(f.OutputSettings);
                 UpdateList();
                 LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
-                S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
+                //TODO: remove?
+                //S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
             }
+            //Reset spec
+            //AllSpec.CorruptCoreSpec.Update(pspec,true,true);
+            gbMain.Enabled = true;
+            //TODO: Make sure we are selected?
+            //RtcCore.SelectedEngine = CorruptionEngine.PLUGIN;
+            //AllSpec.CorruptCoreSpec.Update(RTCSPEC.CORE_SELECTEDENGINE, CorruptionEngine.PLUGIN);
+
             S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
         }
 
@@ -289,14 +196,16 @@ namespace MultiEngine.UI
 
         private void bSave_Click(object sender, EventArgs e)
         {
-            using (SaveFileDialog sfd = new SaveFileDialog() { Filter = "Multi Engine Files|*.mec" })
+            using (SaveFileDialog sfd = new SaveFileDialog() { Filter = "Multi Engine Files|*.me2" })
             {
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        string json = JsonHelper.Serialize(Pack);
-                        File.WriteAllText(sfd.FileName, json);
+                        //string json = JsonHelper.Serialize(Pack);
+                        //File.WriteAllText(sfd.FileName, json);
+                        var bytes = saveSerializer.Serialize(Pack);
+                        File.WriteAllBytes(sfd.FileName, bytes);
                     }
                     catch (Exception ex)
                     {
@@ -306,15 +215,40 @@ namespace MultiEngine.UI
             }
         }
 
+        //Copied from TCPLink.cs line 235
+        private static CerasSerializer CreateSerializer()
+        {
+            var config = new SerializerConfig();
+            config.Advanced.PersistTypeCache = true;
+            config.Advanced.UseReinterpretFormatter = false; //While faster, leads to some weird bugs due to threading abuse
+            config.Advanced.RespectNonSerializedAttribute = false;
+            config.OnResolveFormatter.Add((c, t) =>
+            {
+                if (t == typeof(HashSet<byte[]>))
+                {
+                    return new HashSetFormatterThatKeepsItsComparer();
+                }
+                else if (t == typeof(HashSet<byte?[]>))
+                {
+                    return new NullableByteHashSetFormatterThatKeepsItsComparer();
+                }
+
+                return null; // continue searching
+            });
+            return new CerasSerializer(config);
+        }
+
+
         private void bLoad_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog() {Filter = "Multi Engine Files|*.mec" })
+            using (OpenFileDialog ofd = new OpenFileDialog() {Filter = "Multi Engine Files|*.me2" })
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    Pack = JsonConvert.DeserializeObject<MultiCorruptSettingsPack>(File.ReadAllText(ofd.FileName), new MultiEngineJsonConverter());
+                    Pack = saveSerializer.Deserialize<MultiCorruptSettingsPack>(File.ReadAllBytes(ofd.FileName));
+                    //Pack = JsonConvert.DeserializeObject<MultiCorruptSettingsPack>(File.ReadAllText(ofd.FileName), new MultiEngineJsonConverter());
                     UpdateList();
-                    LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
+                    PushSettings();
                 }
             }
 
@@ -331,7 +265,7 @@ namespace MultiEngine.UI
                     Pack.WeightedSettings.RemoveAt(idx);
                     Pack.WeightedSettings.Insert(idx - 1, item);
                     UpdateList();
-                    LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
+                    PushSettings();
                     lbEngines.SelectedIndex = idx - 1;
                 }
             }
@@ -348,11 +282,22 @@ namespace MultiEngine.UI
                     Pack.WeightedSettings.RemoveAt(idx);
                     Pack.WeightedSettings.Insert(idx + 1, item);
                     UpdateList();
-                    LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
+                    PushSettings();
                     lbEngines.SelectedIndex = idx + 1;
                 }
             }
         }
+
+        public void OnEngineSelected()
+        {
+            //pspec = null;//Copy main spec //AllSpec.CorruptCoreSpec.GetPartialSpec();
+        }
+
+        public void OnEngineDeselected()
+        {
+            //AllSpec.CorruptCoreSpec.Update(pspec, true, true); //Revert entire spec
+        }
+
     }
 
 

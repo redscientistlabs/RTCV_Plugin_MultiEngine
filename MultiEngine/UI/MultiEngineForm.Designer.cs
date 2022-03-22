@@ -37,10 +37,10 @@ namespace MultiEngine.UI
             this.bLoad = new System.Windows.Forms.Button();
             this.bUp = new System.Windows.Forms.Button();
             this.bDown = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label14 = new System.Windows.Forms.Label();
+            this.gbMain = new System.Windows.Forms.GroupBox();
             this.imgWarning = new System.Windows.Forms.PictureBox();
-            this.groupBox1.SuspendLayout();
+            this.label14 = new System.Windows.Forms.Label();
+            this.gbMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgWarning)).BeginInit();
             this.SuspendLayout();
             // 
@@ -175,22 +175,32 @@ namespace MultiEngine.UI
             this.bDown.UseVisualStyleBackColor = false;
             this.bDown.Click += new System.EventHandler(this.bDown_Click);
             // 
-            // groupBox1
+            // gbMain
             // 
-            this.groupBox1.Controls.Add(this.imgWarning);
-            this.groupBox1.Controls.Add(this.label14);
-            this.groupBox1.Controls.Add(this.bAdd);
-            this.groupBox1.Controls.Add(this.btnCorrupt);
-            this.groupBox1.Controls.Add(this.bDown);
-            this.groupBox1.Controls.Add(this.bSave);
-            this.groupBox1.Controls.Add(this.bUp);
-            this.groupBox1.Controls.Add(this.bLoad);
-            this.groupBox1.Controls.Add(this.lbEngines);
-            this.groupBox1.Location = new System.Drawing.Point(0, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(420, 148);
-            this.groupBox1.TabIndex = 167;
-            this.groupBox1.TabStop = false;
+            this.gbMain.Controls.Add(this.imgWarning);
+            this.gbMain.Controls.Add(this.label14);
+            this.gbMain.Controls.Add(this.bAdd);
+            this.gbMain.Controls.Add(this.btnCorrupt);
+            this.gbMain.Controls.Add(this.bDown);
+            this.gbMain.Controls.Add(this.bSave);
+            this.gbMain.Controls.Add(this.bUp);
+            this.gbMain.Controls.Add(this.bLoad);
+            this.gbMain.Controls.Add(this.lbEngines);
+            this.gbMain.Location = new System.Drawing.Point(0, 3);
+            this.gbMain.Name = "gbMain";
+            this.gbMain.Size = new System.Drawing.Size(420, 148);
+            this.gbMain.TabIndex = 167;
+            this.gbMain.TabStop = false;
+            // 
+            // imgWarning
+            // 
+            this.imgWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.imgWarning.Location = new System.Drawing.Point(382, 9);
+            this.imgWarning.Name = "imgWarning";
+            this.imgWarning.Size = new System.Drawing.Size(23, 21);
+            this.imgWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgWarning.TabIndex = 168;
+            this.imgWarning.TabStop = false;
             // 
             // label14
             // 
@@ -203,22 +213,12 @@ namespace MultiEngine.UI
             this.label14.TabIndex = 167;
             this.label14.Text = "Combine multiple engines together";
             // 
-            // imgWarning
-            // 
-            this.imgWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.imgWarning.Location = new System.Drawing.Point(382, 9);
-            this.imgWarning.Name = "imgWarning";
-            this.imgWarning.Size = new System.Drawing.Size(23, 21);
-            this.imgWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.imgWarning.TabIndex = 168;
-            this.imgWarning.TabStop = false;
-            // 
             // MultiEngineForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(420, 151);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.gbMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -229,8 +229,8 @@ namespace MultiEngine.UI
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Tag = "color:dark1";
             this.Text = "Multi Engine";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.gbMain.ResumeLayout(false);
+            this.gbMain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgWarning)).EndInit();
             this.ResumeLayout(false);
 
@@ -245,7 +245,7 @@ namespace MultiEngine.UI
         private System.Windows.Forms.Button bLoad;
         private System.Windows.Forms.Button bUp;
         private System.Windows.Forms.Button bDown;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbMain;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.PictureBox imgWarning;
     }

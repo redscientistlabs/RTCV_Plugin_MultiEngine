@@ -20,11 +20,10 @@ namespace MultiEngine.UI
 {
     public partial class EngineSettingsForm : ComponentForm, IColorize
     {
-        string curEngine = "None";
+        //string curEngine = "None";
         CorruptionEngineForm mySettings;
 
-        private CorruptionEngineForm mainSettings;
-
+        //private CorruptionEngineForm mainSettings;
         public MCSettingsBase OutputSettings { get; private set; } = null;
         MCSettingsBase edit = null;
         //private MemoryDomainsForm myDomains;
@@ -32,13 +31,31 @@ namespace MultiEngine.UI
         public EngineSettingsForm()
         {
             InitializeComponent();
+            
+            //TODO: get plugin engines too
+            //previousPrecision = RtcCore.CurrentPrecision;
 
             Setup();
+
+            bAdd.Enabled = false;
+            Shown += ShownNoEdit;
+
+            FormClosing += EngineSettingsForm_FormClosing;
+        }
+
+        private async void ShownNoEdit(object sender, EventArgs e)
+        {
+            //await Task.Delay(1500);
+            //mySettings.cbCustomPrecision.SelectedIndex = C.PrecisionToIndex(previousPrecision);
+            //SetPrecisionIndex(previousPrecision);
+            bAdd.Enabled = true;
         }
 
         public EngineSettingsForm(MCSettingsBase edit)
         {
             InitializeComponent();
+            //previousPrecision = RtcCore.CurrentPrecision;
+            //editPrecision = edit.Precision;
             Setup();
             this.edit = edit;
 
@@ -56,14 +73,20 @@ namespace MultiEngine.UI
 
             bAdd.Enabled = false;
             bAdd.Text = "Save";
-            this.Shown += EngineSettingsForm_Shown;
+            this.Shown += ShownEdit;
+            FormClosing += EngineSettingsForm_FormClosing;
             //pSettings.Controls.Add(cSettings);
         }
 
-        private async void EngineSettingsForm_Shown(object sender, EventArgs e)
+
+        private async void ShownEdit(object sender, EventArgs e)
         {
-            await Task.Delay(1500);
-            edit.UpdateUI(mySettings,true);
+            //this.Enabled = false;
+            //await Task.Delay(1500);
+            edit.ApplyPartial();
+            mySettings.cbSelectedEngine.SelectedIndex = edit.EngineIndex;
+            mySettings.ResyncAllEngines();
+            //edit.UpdateUI(mySettings,true);
             bAdd.Enabled = true;
             nmIntensity.Value = (decimal)(edit.Percentage * 100.0);
             tbName.Text = edit.DisplayName ?? "";
@@ -86,48 +109,29 @@ namespace MultiEngine.UI
         void Setup()
         {
 
-            object paramValue = AllSpec.VanguardSpec[VSPEC.OVERRIDE_DEFAULTMAXINTENSITY];
-            if (paramValue != null && paramValue is int maxintensity)
+            object maxIntensity = AllSpec.VanguardSpec[VSPEC.OVERRIDE_DEFAULTMAXINTENSITY];
+            if (maxIntensity != null && maxIntensity is int maxintensity)
             {
                 nmForcedIntensity.Maximum = maxintensity;
             }
 
-            mainSettings = S.GET<CorruptionEngineForm>();
+            //mainSettings = S.GET<CorruptionEngineForm>();
+            var mainSettings = S.GET<CorruptionEngineForm>();
 
-            mySettings = new CorruptionEngineForm();
+            mySettings = mainSettings;// new CorruptionEngineForm();
+            myEngineIndex = mainSettings.cbSelectedEngine.SelectedIndex;
+            mySettings.Hide();
+            mySettings.Parent?.Controls.Remove(mainSettings);
             mySettings.AnchorToPanel(pSettings);
-            EngineSync.SyncAll(mySettings);
+            mySettings.Show();
+            //EngineSync.SyncAll(mySettings);
 
-            mySettings.nmAlignment.ValueChanged += (o, e) => { mainSettings.nmAlignment.Value = mySettings.nmAlignment.Value; };
-            mySettings.cbSelectedEngine.SelectedIndexChanged += (o, e) => { mainSettings.cbSelectedEngine.SelectedIndex = mySettings.cbSelectedEngine.SelectedIndex; };
-            mySettings.cbCustomPrecision.SelectedIndexChanged += (o, e) => { mainSettings.cbCustomPrecision.SelectedIndex = mySettings.cbCustomPrecision.SelectedIndex; };
+            //mySettings.nmAlignment.ValueChanged += (o, e) => { mainSettings.nmAlignment.Value = mySettings.nmAlignment.Value; };
+            //mySettings.cbSelectedEngine.SelectedIndexChanged += (o, e) => { mainSettings.cbSelectedEngine.SelectedIndex = mySettings.cbSelectedEngine.SelectedIndex; };
+            //mySettings.cbCustomPrecision.SelectedIndexChanged += (o, e) => { mainSettings.cbCustomPrecision.SelectedIndex = mySettings.cbCustomPrecision.SelectedIndex; };
 
             lbMemoryDomains.Items.AddRange(S.GET<MemoryDomainsForm>().lbMemoryDomains.Items);
-            
-            //myDomains = new MemoryDomainsForm();
-            //myDomains.AnchorToPanel(pDomains);
-            //myDomains.SuspendLayout();
-            //var idx = myDomains.Controls.IndexOf(myDomains.lbMemoryDomains);
-            //var om = myDomains.lbMemoryDomains;
-            ////Remove list box so we don't /Actually change the domains
-            //myDomains.Controls.Remove(myDomains.lbMemoryDomains);
-            //myDomains.lbMemoryDomains = new RTCV.UI.Components.Controls.ListBoxExtended()
-            //{
-            //    Size = om.Size,
-            //    ForeColor = om.ForeColor,
-            //    BackColor = om.BackColor,
-            //    Location = om.Location,
-            //    Anchor = om.Anchor,
-            //    Tag = om.Tag,
-            //    SelectionMode = om.SelectionMode,
-            //    Dock = om.Dock
-            //};
-            //myDomains.Controls.Add(myDomains.lbMemoryDomains);
-            //myDomains.ResumeLayout();
-            //myDomains.RefreshDomains();
-            //myDomains.Show();
         }
-
 
         private void bAdd_Click(object sender, EventArgs e)
         {
@@ -171,14 +175,24 @@ namespace MultiEngine.UI
             {
                 OutputSettings.Percentage = (double)nmIntensity.Value / 100.0;
             }
-            OutputSettings.Weight = 1.0;
+            //OutputSettings.Weight = 1.0;
             OutputSettings.Extract(mySettings);
+            //OutputSettings.UpdateCache(); //Update partial cache
 
             //string[] lst = new List<string>(myDomains.lbMemoryDomains.SelectedItems.Cast<string>()).ToArray();
             string[] lst = new List<string>(lbMemoryDomains.SelectedItems.Cast<string>()).ToArray();
             OutputSettings.Domains = lst;
             DialogResult = DialogResult.OK;
+            
             Close();
+        }
+
+        private void EngineSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Visible = false;
+            mySettings.RestoreToPreviousPanel();
+            //TODO:resync in MultiEngineForm
+            //mySettings.ResyncAllEngines();
         }
 
         private void btnSelectAll_Click(object sender, EventArgs e)

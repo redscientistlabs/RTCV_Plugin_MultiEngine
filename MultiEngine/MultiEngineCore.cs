@@ -21,6 +21,7 @@ namespace MultiEngine
             pack = settingPack;
         }
 
+        //TODO: remove
         public static BlastLayer Corrupt(int[] lastUsedIndices)
         {
             List<BlastUnit> bus = new List<BlastUnit>();
@@ -30,7 +31,7 @@ namespace MultiEngine
             {
                 var setting = pack.WeightedSettings[settingInd];
                 lastUsedIndices[setting.EngineIndex()] = settingInd;//For updating UI
-                setting.Apply();
+                setting.ApplyPartial();
                 long intensity = RtcCore.Intensity;
                 int precision = RtcCore.CurrentPrecision;
                 int alignment = RtcCore.Alignment;
@@ -45,6 +46,7 @@ namespace MultiEngine
                 {
                     string dom = domains[RtcCore.RND.Next(domains.Length)];
                     MemoryInterface mi = MemoryDomains.GetInterface(dom);
+                    //TODO: switch on engine name
                     bus.AddRange(setting.GetBlastUnits(dom, RtcCore.RND.NextLong(0, mi.Size-(precision*2)), precision, alignment));
                 }
             }

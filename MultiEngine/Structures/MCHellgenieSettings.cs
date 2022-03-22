@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Ceras;
 using Newtonsoft.Json;
 using RTCV.CorruptCore;
+using RTCV.NetCore;
 using RTCV.UI;
 using RTCV.UI.Components.EngineConfig.EngineControls;
 
@@ -25,33 +26,32 @@ namespace MultiEngine.Structures
 
         }
 
-        public override void Apply()
-        {
-            base.Apply();
-            switch (Precision)
-            {
-                case 1:
-                    HellgenieEngine.MinValue8Bit = MinValue;
-                    HellgenieEngine.MaxValue8Bit = MaxValue;
-                    break;
-                case 2:
-                    HellgenieEngine.MinValue16Bit = MinValue;
-                    HellgenieEngine.MaxValue16Bit = MaxValue;
-                    break;
-                case 4:
-                    HellgenieEngine.MinValue32Bit = MinValue;
-                    HellgenieEngine.MaxValue32Bit = MaxValue;
-                    break;
-                case 8:
-                    HellgenieEngine.MinValue64Bit = MinValue;
-                    HellgenieEngine.MaxValue64Bit = MaxValue;
-                    break;
-            }
-        }
+        //public override void Apply()
+        //{
+        //    base.Apply();
+        //    switch (Precision)
+        //    {
+        //        case 1:
+        //            HellgenieEngine.MinValue8Bit = MinValue;
+        //            HellgenieEngine.MaxValue8Bit = MaxValue;
+        //            break;
+        //        case 2:
+        //            HellgenieEngine.MinValue16Bit = MinValue;
+        //            HellgenieEngine.MaxValue16Bit = MaxValue;
+        //            break;
+        //        case 4:
+        //            HellgenieEngine.MinValue32Bit = MinValue;
+        //            HellgenieEngine.MaxValue32Bit = MaxValue;
+        //            break;
+        //        case 8:
+        //            HellgenieEngine.MinValue64Bit = MinValue;
+        //            HellgenieEngine.MaxValue64Bit = MaxValue;
+        //            break;
+        //    }
+        //}
 
         public override void Extract(CorruptionEngineForm form)
         {
-            base.Extract(form);
 
             switch (RtcCore.CurrentPrecision)
             {
@@ -73,6 +73,7 @@ namespace MultiEngine.Structures
                     break;
             }
 
+            base.Extract(form);
         }
 
         public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
@@ -87,10 +88,16 @@ namespace MultiEngine.Structures
         {
             return new BlastUnit[] { HellgenieEngine.GenerateUnit(domain,address,precision,alignment) };
         }
+        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
+        {
+            partial.Insert(HellgenieEngine.getDefaultPartial());
+            return partial;
+        }
 
         public override string ToString()
         {
             return $"{PercentageString} {DisplayName ?? "Hellgenie"} [{this.Precision}, {MinValue.ToString("X")}-{MaxValue.ToString("X")}]";
         }
+
     }
 }

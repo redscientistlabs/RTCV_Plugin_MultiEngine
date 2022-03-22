@@ -7,6 +7,7 @@ using Ceras;
 using Newtonsoft.Json;
 using RTCV.Common;
 using RTCV.CorruptCore;
+using RTCV.NetCore;
 using RTCV.UI;
 using RTCV.UI.Components.EngineConfig.EngineControls;
 
@@ -18,20 +19,14 @@ namespace MultiEngine.Structures
     {
         [JsonProperty]
         public string LimiterList { get; private set; }
-        [JsonProperty]
-        public string LimiterListHash { get; private set; }
-        [JsonProperty]
-        public int ChunkSize { get; private set; }
-        [JsonProperty]
-        public string ShuffleType { get; private set; }
-        [JsonProperty]
-        public int Modifier { get; private set; }
-        [JsonProperty]
-        public bool OutputMultipleUnits { get; private set; }
-        [JsonProperty]
-        public bool FilterAll { get; private set; }
-        [JsonProperty]
-        public string Direction { get; private set; }
+        public string LimiterListHash => CachedSpec.Get<string>("CLUSTER_LIMITERLISTHASH");
+        public int ChunkSize => CachedSpec.Get<int>("CLUSTER_SHUFFLEAMT");
+        public string ShuffleType => CachedSpec.Get<string>("CLUSTER_SHUFFLETYPE");
+        public int Modifier => CachedSpec.Get<int>("CLUSTER_MODIFIER");
+        public bool OutputMultipleUnits => CachedSpec.Get<bool>("CLUSTER_MULTIOUT");
+        public bool FilterAll => CachedSpec.Get<bool>("CLUSTER_FILTERALL");
+        public string Direction => CachedSpec?.Get<string>("CLUSTER_DIR");
+
 
 
         public MCClusterSettings() : base()
@@ -41,28 +36,52 @@ namespace MultiEngine.Structures
 
         public override void Extract(CorruptionEngineForm form)
         {
-            base.Extract(form);
             LimiterList = ((ComboBoxItem<string>)form.ClusterEngineControl.cbClusterLimiterList.SelectedItem)?.Name.ToString();
-            LimiterListHash = ClusterEngine.LimiterListHash;
-            ChunkSize = ClusterEngine.ChunkSize;
-            ShuffleType = ClusterEngine.ShuffleType;
-            Modifier = ClusterEngine.Modifier;
-            OutputMultipleUnits = ClusterEngine.OutputMultipleUnits;
-            FilterAll = ClusterEngine.FilterAll;
-            Direction = ClusterEngine.Direction;
+            base.Extract(form);
+            //LimiterListHash = ClusterEngine.LimiterListHash;
+            //ChunkSize = ClusterEngine.ChunkSize;
+            //ShuffleType = ClusterEngine.ShuffleType;
+            //Modifier = ClusterEngine.Modifier;
+            //OutputMultipleUnits = ClusterEngine.OutputMultipleUnits;
+            //FilterAll = ClusterEngine.FilterAll;
+            //Direction = ClusterEngine.Direction;
         }
 
-        public override void Apply()
+        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
         {
-            base.Apply();
-            ClusterEngine.LimiterListHash = LimiterListHash;
-            ClusterEngine.ChunkSize = ChunkSize;
-            ClusterEngine.ShuffleType = ShuffleType;
-            ClusterEngine.Modifier = Modifier;
-            ClusterEngine.OutputMultipleUnits = OutputMultipleUnits;
-            ClusterEngine.FilterAll = FilterAll;
-            ClusterEngine.Direction = Direction;
+            partial.Insert(ClusterEngine.getDefaultPartial());
+
+            //partial["CLUSTER_LIMITERLISTHASH"] = LimiterListHash;
+            //partial["CLUSTER_SHUFFLETYPE"] = ShuffleType;
+            //partial["CLUSTER_SHUFFLEAMT"] = ChunkSize;
+            //partial["CLUSTER_MODIFIER"] = Modifier;
+            //partial["CLUSTER_MULTIOUT"] = OutputMultipleUnits;
+            //partial["CLUSTER_FILTERALL"] = FilterAll;
+            //partial["CLUSTER_DIR"] = Direction;
+            return partial;
         }
+
+        //public override void Apply()
+        //{
+        //    PartialSpec partial = UpdateSpec;
+        //    partial["CLUSTER_LIMITERLISTHASH"] = LimiterListHash;
+        //    partial["CLUSTER_SHUFFLETYPE"] = ShuffleType;
+        //    partial["CLUSTER_SHUFFLEAMT"] = ChunkSize;
+        //    partial["CLUSTER_MODIFIER"] = Modifier;
+        //    partial["CLUSTER_MULTIOUT"] = OutputMultipleUnits;
+        //    partial["CLUSTER_FILTERALL"] = FilterAll;
+        //    partial["CLUSTER_DIR"] = Direction;
+        //    AllSpec.CorruptCoreSpec.Update(partial);
+
+        //    //ClusterEngine.getDefaultPartial();
+        //    //ClusterEngine.LimiterListHash = LimiterListHash;
+        //    //ClusterEngine.ChunkSize = ChunkSize;
+        //    //ClusterEngine.ShuffleType = ShuffleType;
+        //    //ClusterEngine.Modifier = Modifier;
+        //    //ClusterEngine.OutputMultipleUnits = OutputMultipleUnits;
+        //    //ClusterEngine.FilterAll = FilterAll;
+        //    //ClusterEngine.Direction = Direction;
+        //}
 
         public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
