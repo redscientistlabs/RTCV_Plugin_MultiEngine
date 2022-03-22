@@ -36,7 +36,7 @@ namespace MultiEngine.Structures
             return new BlastUnit[] { PipeEngine.GenerateUnit(domain,address,precision,alignment) };
         }
 
-        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
+        protected PartialSpec BuildUpdateSpec(PartialSpec partial)
         {
             //No partial for pipe
             //partial.Insert(PipeEngine.getDefaultPartial());

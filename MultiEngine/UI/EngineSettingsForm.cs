@@ -31,13 +31,13 @@ namespace MultiEngine.UI
         public EngineSettingsForm()
         {
             InitializeComponent();
-            
+
             //TODO: get plugin engines too
             //previousPrecision = RtcCore.CurrentPrecision;
+            bAdd.Enabled = false;
 
             Setup();
 
-            bAdd.Enabled = false;
             Shown += ShownNoEdit;
 
             FormClosing += EngineSettingsForm_FormClosing;
@@ -56,6 +56,8 @@ namespace MultiEngine.UI
             InitializeComponent();
             //previousPrecision = RtcCore.CurrentPrecision;
             //editPrecision = edit.Precision;
+            bAdd.Enabled = false;
+
             Setup();
             this.edit = edit;
 
@@ -71,7 +73,6 @@ namespace MultiEngine.UI
                 }
             }
 
-            bAdd.Enabled = false;
             bAdd.Text = "Save";
             this.Shown += ShownEdit;
             FormClosing += EngineSettingsForm_FormClosing;
@@ -108,64 +109,61 @@ namespace MultiEngine.UI
 
         void Setup()
         {
-
             object maxIntensity = AllSpec.VanguardSpec[VSPEC.OVERRIDE_DEFAULTMAXINTENSITY];
             if (maxIntensity != null && maxIntensity is int maxintensity)
             {
                 nmForcedIntensity.Maximum = maxintensity;
             }
 
-            //mainSettings = S.GET<CorruptionEngineForm>();
-            var mainSettings = S.GET<CorruptionEngineForm>();
+            //var mainSettings = S.GET<CorruptionEngineForm>();
 
-            mySettings = mainSettings;// new CorruptionEngineForm();
-            myEngineIndex = mainSettings.cbSelectedEngine.SelectedIndex;
+            mySettings = S.GET<CorruptionEngineForm>();
             mySettings.Hide();
-            mySettings.Parent?.Controls.Remove(mainSettings);
+            mySettings.Parent?.Controls.Remove(mySettings);
             mySettings.AnchorToPanel(pSettings);
             mySettings.Show();
-            //EngineSync.SyncAll(mySettings);
-
-            //mySettings.nmAlignment.ValueChanged += (o, e) => { mainSettings.nmAlignment.Value = mySettings.nmAlignment.Value; };
-            //mySettings.cbSelectedEngine.SelectedIndexChanged += (o, e) => { mainSettings.cbSelectedEngine.SelectedIndex = mySettings.cbSelectedEngine.SelectedIndex; };
-            //mySettings.cbCustomPrecision.SelectedIndexChanged += (o, e) => { mainSettings.cbCustomPrecision.SelectedIndex = mySettings.cbCustomPrecision.SelectedIndex; };
 
             lbMemoryDomains.Items.AddRange(S.GET<MemoryDomainsForm>().lbMemoryDomains.Items);
         }
 
         private void bAdd_Click(object sender, EventArgs e)
         {
-            //TODO: extract engine settings
-            Console.WriteLine($"Selected Engine: {mySettings.cbSelectedEngine.SelectedItem}");
+            //Console.WriteLine($"Selected Engine: {mySettings.cbSelectedEngine.SelectedItem}");
             OutputSettings = null;
-            switch (mySettings.cbSelectedEngine.SelectedItem.ToString())
+
+            switch (RtcCore.SelectedEngine)
             {
-                case C.NightmareEngineStr:
-                    OutputSettings = new MCNightmareSettings();
+                case CorruptionEngine.NIGHTMARE:
+                    OutputSettings = new MCSettingsBase(NightmareEngine.getDefaultPartial());
                     break;
-                case C.PipeEngineStr:
-                    OutputSettings = new MCPipeSettings();
+                case CorruptionEngine.HELLGENIE:
+                    OutputSettings = new MCSettingsBase(HellgenieEngine.getDefaultPartial());
                     break;
-                case C.VectorEngineStr:
-                    OutputSettings = new MCVectorSettings();
+                case CorruptionEngine.DISTORTION:
+                    OutputSettings = new MCSettingsBase(DistortionEngine.getDefaultPartial());
                     break;
-                case C.HellgenieEngineStr:
-                    OutputSettings = new MCHellgenieSettings();
+                case CorruptionEngine.FREEZE:
+                    OutputSettings = new MCSettingsBase(null);
                     break;
-                case C.FreezeEngineStr:
-                    OutputSettings = new MCFreezeSettings();
+                case CorruptionEngine.PIPE:
+                    OutputSettings = new MCSettingsBase(null);
                     break;
-                case C.DistortionEngineStr:
-                    OutputSettings = new MCDistortionSettings();
+                case CorruptionEngine.VECTOR:
+                    OutputSettings = new MCSettingsBase(VectorEngine.getDefaultPartial());
                     break;
-                case C.ClusterEngineStr:
-                    OutputSettings = new MCClusterSettings();
-                    MessageBox.Show("Main form UI not fully synced, settings are applied to Cluster Engine.\r\nAffected settings: Rotate Amount and Cluster Chunk Size\r\nUpdating these settings on the main UI will sync them again", "Main Form UI Not Synced");
+                case CorruptionEngine.CLUSTER:
+                    OutputSettings = new MCSettingsBase(ClusterEngine.getDefaultPartial());
                     break;
                 default:
-                    MessageBox.Show("Cannot add the selected engine type, please select another.");
-                    return;
+                    break;
             }
+
+            if(OutputSettings == null)
+            {
+                MessageBox.Show("Selected engine is not supported for MultiEngine");
+                return;
+            }
+
             if (!string.IsNullOrWhiteSpace(tbName.Text)) OutputSettings.DisplayName = tbName.Text;
             if (cbForceIntensity.Checked)
             {
@@ -175,11 +173,8 @@ namespace MultiEngine.UI
             {
                 OutputSettings.Percentage = (double)nmIntensity.Value / 100.0;
             }
-            //OutputSettings.Weight = 1.0;
-            OutputSettings.Extract(mySettings);
-            //OutputSettings.UpdateCache(); //Update partial cache
 
-            //string[] lst = new List<string>(myDomains.lbMemoryDomains.SelectedItems.Cast<string>()).ToArray();
+            OutputSettings.Extract(mySettings);
             string[] lst = new List<string>(lbMemoryDomains.SelectedItems.Cast<string>()).ToArray();
             OutputSettings.Domains = lst;
             DialogResult = DialogResult.OK;

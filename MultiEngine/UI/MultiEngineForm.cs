@@ -36,7 +36,6 @@ namespace MultiEngine.UI
 
         private static CerasSerializer saveSerializer;
 
-        private PartialSpec masterSpec = null;
 
         private CorruptionEngineForm originalEngineForm = null;
 
@@ -45,8 +44,7 @@ namespace MultiEngine.UI
             InitializeComponent();
             //pack = new MultiCorruptSettingsPack();
             saveSerializer = CreateSerializer();
-            InitMasterSpec();
-
+           
             ContextMenu menu = new ContextMenu(new MenuItem[]
             {
                 new MenuItem("Delete Selected", (o,e) =>
@@ -64,10 +62,11 @@ namespace MultiEngine.UI
                 {
                     if(lbEngines.SelectedItem != null)
                     {
+                        int multiEngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
+                        C.CacheMasterSpec();
                         gbMain.Enabled = false;
                         var item = lbEngines.SelectedItem as MCSettingsBase;
                         var esf = new EngineSettingsForm(item);
-                        int multiEngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
 
                         if (esf.ShowDialog() == DialogResult.OK)
                         {
@@ -78,8 +77,10 @@ namespace MultiEngine.UI
                             PushSettings();
                             S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
                         }
-                        gbMain.Enabled = true;
+                        C.RestoreMasterSpec(true);
+                        S.GET<CorruptionEngineForm>().ResyncAllEngines();
                         S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
+                        gbMain.Enabled = true;
                     }
                 })
             });
@@ -98,18 +99,7 @@ namespace MultiEngine.UI
             //cbValueList.DataSource = RTCV.CorruptCore.RtcCore.ValueListBindingSource;
         }
 
-        private void InitMasterSpec()
-        {
-            masterSpec = new PartialSpec(C.SPEC_NAME);
-            //masterSpec[RTCSPEC.CORE_INTENSITY] = RtcCore.Intensity;
-            masterSpec[RTCSPEC.CORE_CURRENTALIGNMENT] = RtcCore.Alignment;
-            masterSpec[RTCSPEC.CORE_CURRENTPRECISION] = RtcCore.CurrentPrecision;
-            masterSpec.Insert(NightmareEngine.getDefaultPartial());
-            masterSpec.Insert(HellgenieEngine.getDefaultPartial());
-            masterSpec.Insert(DistortionEngine.getDefaultPartial());
-            masterSpec.Insert(VectorEngine.getDefaultPartial());
-            masterSpec.Insert(ClusterEngine.getDefaultPartial());
-        }
+
 
         private void PushSettings()
         {
@@ -120,6 +110,10 @@ namespace MultiEngine.UI
         {
             corrupting = false;
         }
+
+        
+
+        
 
         //Todo: remove
         [Obsolete]
@@ -157,12 +151,13 @@ namespace MultiEngine.UI
             }
         }
 
-        private void bAdd_Click(object sender, EventArgs e)
+        private async void bAdd_Click(object sender, EventArgs e)
         {
             //Cache before changes
+            C.CacheMasterSpec();
             //PartialSpec pspec = AllSpec.CorruptCoreSpec.GetPartialSpec();
-            var f = new EngineSettingsForm();
             int multiEngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
+            var f = new EngineSettingsForm();
             gbMain.Enabled = false;
             if (f.ShowDialog() == DialogResult.OK)
             {
@@ -173,13 +168,14 @@ namespace MultiEngine.UI
                 //S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
             }
             //Reset spec
-            //AllSpec.CorruptCoreSpec.Update(pspec,true,true);
+            C.RestoreMasterSpec(true);
+            S.GET<CorruptionEngineForm>().ResyncAllEngines();
+            S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
             gbMain.Enabled = true;
             //TODO: Make sure we are selected?
             //RtcCore.SelectedEngine = CorruptionEngine.PLUGIN;
             //AllSpec.CorruptCoreSpec.Update(RTCSPEC.CORE_SELECTEDENGINE, CorruptionEngine.PLUGIN);
 
-            S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
         }
 
         void UpdateList()

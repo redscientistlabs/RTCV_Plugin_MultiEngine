@@ -35,7 +35,7 @@ namespace MultiEngine.Structures
             return new BlastUnit[] { FreezeEngine.GenerateUnit(domain, address, precision, alignment) };
         }
 
-        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
+        protected PartialSpec BuildUpdateSpec(PartialSpec partial)
         {
             //no default partial here
             return partial;

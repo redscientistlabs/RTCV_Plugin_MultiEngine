@@ -9,6 +9,7 @@ using Ceras;
 using RTCV.CorruptCore;
 using Newtonsoft.Json;
 using RTCV.NetCore;
+using RTCV.Common;
 
 namespace MultiEngine.Structures
 {
@@ -17,26 +18,13 @@ namespace MultiEngine.Structures
     public class MCSettingsBase
     {
         public string DisplayName { get; set; } = null;
-        //TODO: remove
-        //public double Weight { get; set; } = 1.0;
         public long ForcedIntensity { get; set; } = -1;
         public double Percentage { get; set; } = 1.0;
-        //public int Alignment { get; private set; }
         public int Alignment => cachedSpec.Get<int>(RTCSPEC.CORE_CURRENTALIGNMENT);
-        //TODO: remove
-        //public int PrecisionIndex { get; private set; }
-        //public int Precision { get; private set; }
         public int Precision => cachedSpec.Get<int>(RTCSPEC.CORE_CURRENTPRECISION);
-        //public int Precision {
-        //    get { }
-
-        //TODO: engine by name/enum
         public int EngineIndex { get; private set; }
-        public string Type { get; private set; }
 
         public CorruptionEngine EngineType { get; private set; }
-
-        //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string[] Domains { get; set; } = null;
 
         protected string PercentageString { get { if (ForcedIntensity > 0) return $"[{ForcedIntensity,7}]"; else return $"[{Percentage * 100.0,6:0.00}%]"; } }
@@ -46,32 +34,34 @@ namespace MultiEngine.Structures
 
         [Ceras.Exclude]
         protected PartialSpec CachedSpec => cachedSpec;
-        protected PartialSpec TemplateSpec { get; set; }
-
 
         /// <summary>
-        /// Please call base constructor
+        /// for ceras
         /// </summary>
         public MCSettingsBase() 
         {
-            Type = this.GetType().Name;
+
         }
 
         /// <summary>
         /// Please call base constructor
         /// </summary>
-        public MCSettingsBase(PartialSpec spec) : this()
+        public MCSettingsBase(PartialSpec template)
         {
             PartialSpec partial = new PartialSpec(C.SPEC_NAME);
-            partial.Insert(spec);
+            if(template != null) partial.Insert(template);
+
             partial[RTCSPEC.CORE_CURRENTPRECISION] = RtcCore.CurrentPrecision;
             partial[RTCSPEC.CORE_CURRENTALIGNMENT] = RtcCore.Alignment;
-
+            cachedSpec = partial;
+            EngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
+            EngineType = RtcCore.SelectedEngine;
+            UpdateCache();
         }
 
 
         /// <summary>
-        /// Only override if using a different spec from <see cref="AllSpec.CorruptCoreSpec"/>
+        /// Only override if using a different spec from <see cref="AllSpec.CorruptCoreSpec"/>. Updates without pushing
         /// </summary>
         public virtual void ApplyPartial()
         {
@@ -80,6 +70,7 @@ namespace MultiEngine.Structures
 
         private void UpdateCache()
         {
+            //Update all 
             cachedSpec.ExtractFrom(AllSpec.CorruptCoreSpec.GetPartialSpec());
 
             //cachedSpec = PopulatePartial(CreateBaseUpdateSpec());
@@ -115,6 +106,7 @@ namespace MultiEngine.Structures
         //    return partial;
         //}
 
+        //TODO: remove
         [Obsolete]
         public virtual void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
@@ -136,10 +128,41 @@ namespace MultiEngine.Structures
             UpdateCache();
         }
 
+        public override string ToString()
+        {
+            return $"{PercentageString} {DisplayName ?? "TODO"} ";
+        }
+
         //Switch
         public virtual BlastUnit[] GetBlastUnits(string domain, long address, int precision, int alignment)
         {
-            return null;
+            switch (EngineType)
+            {
+                case CorruptionEngine.NIGHTMARE:
+                    return new BlastUnit[] { NightmareEngine.GenerateUnit(domain, address, precision, alignment) };
+                case CorruptionEngine.HELLGENIE:
+                    return new BlastUnit[] { HellgenieEngine.GenerateUnit(domain, address, precision, alignment) };
+                case CorruptionEngine.DISTORTION:
+                    return new BlastUnit[] { DistortionEngine.GenerateUnit(domain, address, precision, alignment) };
+                case CorruptionEngine.FREEZE:
+                    return new BlastUnit[] { FreezeEngine.GenerateUnit(domain, address, precision, alignment) };
+                case CorruptionEngine.PIPE:
+                    return new BlastUnit[] { PipeEngine.GenerateUnit(domain, address, precision, alignment) };
+                case CorruptionEngine.VECTOR:
+                    return new BlastUnit[] { VectorEngine.GenerateUnit(domain, address, alignment) };
+                case CorruptionEngine.CLUSTER:
+                    var clusterResult = ClusterEngine.GenerateUnit(domain, address, alignment);
+                    if (clusterResult == null || clusterResult.Length == 0)
+                    {
+                        return new BlastUnit[] { null };
+                    }
+                    else
+                    {
+                        return clusterResult;
+                    }
+                default:
+                    return null;
+            }
         }
 
         //public virtual void PreCorrupt() { }

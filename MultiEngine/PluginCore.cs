@@ -33,6 +33,9 @@ namespace MultiEngine
 
         public bool Start(RTCSide side)
         {
+
+            C.InitMasterSpec();
+
             if (side == RTCSide.Client)
             {
                 connectorEMU = new PluginConnectorEMU();

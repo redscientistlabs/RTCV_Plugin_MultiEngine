@@ -88,7 +88,7 @@ namespace MultiEngine.Structures
         {
             return new BlastUnit[] { HellgenieEngine.GenerateUnit(domain,address,precision,alignment) };
         }
-        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
+        protected PartialSpec BuildUpdateSpec(PartialSpec partial)
         {
             partial.Insert(HellgenieEngine.getDefaultPartial());
             return partial;

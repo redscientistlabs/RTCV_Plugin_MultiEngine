@@ -33,7 +33,7 @@ namespace MultiEngine.Structures
         //    //DistortionEngine.Delay = Delay;
         //}
 
-        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
+        protected PartialSpec BuildUpdateSpec(PartialSpec partial)
         {
             partial.Insert(DistortionEngine.getDefaultPartial());
             return partial;

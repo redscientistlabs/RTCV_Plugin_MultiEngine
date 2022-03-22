@@ -31,6 +31,9 @@ namespace MultiEngine
 
         public const string SPEC_NAME = "RTCSpec";
 
+        private static PartialSpec masterSpec = null;
+
+
         public static int[] GetEngineArray()
         {
             return new int[7] { -1, -1, -1, -1, -1, -1, -1, };
@@ -99,6 +102,31 @@ namespace MultiEngine
         //    return -1;
         //}
 
+        public static void InitMasterSpec()
+        {
+            masterSpec = new PartialSpec(C.SPEC_NAME);
+            //masterSpec[RTCSPEC.CORE_INTENSITY] = RtcCore.Intensity;
+            masterSpec[RTCSPEC.CORE_CURRENTALIGNMENT] = RtcCore.Alignment;
+            masterSpec[RTCSPEC.CORE_CURRENTPRECISION] = RtcCore.CurrentPrecision;
+            masterSpec.Insert(RTCV.CorruptCore.NightmareEngine.getDefaultPartial());
+            masterSpec.Insert(RTCV.CorruptCore.HellgenieEngine.getDefaultPartial());
+            masterSpec.Insert(RTCV.CorruptCore.DistortionEngine.getDefaultPartial());
+            masterSpec.Insert(RTCV.CorruptCore.VectorEngine.getDefaultPartial());
+            masterSpec.Insert(RTCV.CorruptCore.ClusterEngine.getDefaultPartial());
+        }
+
+        public static void CacheMasterSpec()
+        {
+            masterSpec.ExtractFrom(AllSpec.CorruptCoreSpec);
+        }
+
+        public static void RestoreMasterSpec(bool push = false)
+        {
+            AllSpec.CorruptCoreSpec.Update(masterSpec, push, push);
+        }
+
+        
+
 
         public static int PrecisionToIndex(int precision)
         {
@@ -137,6 +165,15 @@ namespace MultiEngine
 
 
         public static void ExtractFrom(this PartialSpec to, PartialSpec from)
+        {
+            var keys = to.GetKeys();
+            foreach (var key in keys)
+            {
+                to[key] = from[key];
+            }
+        }
+
+        public static void ExtractFrom(this PartialSpec to, FullSpec from)
         {
             var keys = to.GetKeys();
             foreach (var key in keys)

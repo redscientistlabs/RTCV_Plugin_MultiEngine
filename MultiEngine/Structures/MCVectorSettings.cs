@@ -163,7 +163,7 @@ namespace MultiEngine.Structures
             return $"{PercentageString} {DisplayName ?? "Vector"} [{LimiterList},{ValueList}]";
         }
 
-        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
+        protected PartialSpec BuildUpdateSpec(PartialSpec partial)
         {
             partial.Insert(VectorEngine.getDefaultPartial());
             return partial;

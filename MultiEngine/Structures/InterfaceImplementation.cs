@@ -23,10 +23,10 @@ namespace MultiEngine.Structures
         bool ICorruptionEngine.SupportsMemoryDomains => true;
 
         [Exclude]
-        Form ICorruptionEngine.Control { get { return control; } }
+        Form ICorruptionEngine.Control { get { return engineForm; } }
 
         [Exclude]
-        Form control { get; set; } = null;
+        MultiEngineForm engineForm { get; set; } = null;
 
 
         public MultiEngine_InterfaceImplementation() //empty constructor required by ceras
@@ -34,48 +34,64 @@ namespace MultiEngine.Structures
 
         }
 
-        public MultiEngine_InterfaceImplementation(Form _control)
+        public MultiEngine_InterfaceImplementation(MultiEngineForm _control)
         {
-            control = _control;
+            engineForm = _control;
         }
 
         BlastLayer ICorruptionEngine.GetBlastLayer(long intensity)
         {
-            //Cache spec
-            PartialSpec pspec = AllSpec.CorruptCoreSpec.GetPartialSpec();
-            var precision = RtcCore.CurrentPrecision;
+           
+            
+            try
+            {   
+                //Cache spec
+                C.CacheMasterSpec();
 
-            var domains = RTCV.NetCore.AllSpec.UISpec["SELECTEDDOMAINS"] as string[];
-            if (domains == null || domains.Length == 0)
-            {
-                MessageBox.Show("Can't corrupt with no domains selected.");
-                return null;
+                //PartialSpec pspec =  AllSpec.CorruptCoreSpec.GetPartialSpec();
+                //var precision = RtcCore.CurrentPrecision;
+
+                var domains = RTCV.NetCore.AllSpec.UISpec["SELECTEDDOMAINS"] as string[];
+                if (domains == null || domains.Length == 0)
+                {
+                    MessageBox.Show("Can't corrupt with no domains selected.");
+                    return null;
+                }
+
+                //Do setup on the rtc side
+                //foreach (var item in UI.MultiEngineForm.Pack.WeightedSettings)
+                //{
+                //    item.PreCorrupt();
+                //}
+
+
+                // TODO REMOVE THIS AFTER OPTIMIZATION
+                //if (S.GET<CoreForm>().AutoCorrupt)
+                //{
+                //    S.GET<CoreForm>().AutoCorrupt = false;
+                //}
+
+
+                //S.GET<StashHistoryForm>().DontLoadSelectedStash = true;
+                ////Corrupt here
+                //var last = C.GetEngineArray();
+                return MultiEngineCore.Corrupt();
+
+                //AllSpec.CorruptCoreSpec.Update(pspec, false, false);
+                //RtcCore.CurrentPrecision = precision;
+                //LocalNetCoreRouter.Route(PluginRouting.Endpoints.RTC_SIDE, PluginRouting.Commands.RESYNC_SETTINGS, last, true);
+                //return res;
+
             }
-
-            //Do setup on the rtc side
-            //foreach (var item in UI.MultiEngineForm.Pack.WeightedSettings)
-            //{
-            //    item.PreCorrupt();
-            //}
-
-
-            // TODO REMOVE THIS AFTER OPTIMIZATION
-            //if (S.GET<CoreForm>().AutoCorrupt)
-            //{
-            //    S.GET<CoreForm>().AutoCorrupt = false;
-            //}
-
-
-            //S.GET<StashHistoryForm>().DontLoadSelectedStash = true;
-            ////Corrupt here
-            var last = C.GetEngineArray();
-            var res = MultiEngineCore.Corrupt(last);
-
-            //Revert entire spec on this side
-            AllSpec.CorruptCoreSpec.Update(pspec,false,false);
-            RtcCore.CurrentPrecision = precision;
-            //LocalNetCoreRouter.Route(PluginRouting.Endpoints.RTC_SIDE, PluginRouting.Commands.RESYNC_SETTINGS, last, true);
-            return res;
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                //Revert entire spec on this side
+                C.RestoreMasterSpec(false);
+            }
             //return UI.MultiEngineForm.InnerCorrupt(false);
 
             //if (success)
@@ -85,7 +101,7 @@ namespace MultiEngine.Structures
         }
 
 
-        string ICorruptionEngine.ToString() => control?.ToString();
+        string ICorruptionEngine.ToString() => engineForm?.ToString();
 
         void ICorruptionEngine.OnSelect()
         {

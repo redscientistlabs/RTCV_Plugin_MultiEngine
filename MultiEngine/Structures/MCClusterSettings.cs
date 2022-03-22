@@ -47,7 +47,7 @@ namespace MultiEngine.Structures
             //Direction = ClusterEngine.Direction;
         }
 
-        protected override PartialSpec BuildUpdateSpec(PartialSpec partial)
+        protected PartialSpec BuildUpdateSpec(PartialSpec partial)
         {
             partial.Insert(ClusterEngine.getDefaultPartial());
 
