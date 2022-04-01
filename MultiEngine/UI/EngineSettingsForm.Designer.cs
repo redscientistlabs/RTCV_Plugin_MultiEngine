@@ -35,18 +35,20 @@ namespace MultiEngine.UI
             this.nmIntensity = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.pDomains = new System.Windows.Forms.Panel();
+            this.tbNewDomain = new System.Windows.Forms.TextBox();
+            this.bAddDomain = new System.Windows.Forms.Button();
             this.btnUnselectDomains = new System.Windows.Forms.Button();
             this.btnSelectAll = new System.Windows.Forms.Button();
             this.lbMemoryDomains = new RTCV.UI.Components.Controls.ListBoxExtended();
-            this.bAddDomain = new System.Windows.Forms.Button();
-            this.tbNewDomain = new System.Windows.Forms.TextBox();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cbForceIntensity = new System.Windows.Forms.CheckBox();
             this.nmForcedIntensity = new System.Windows.Forms.NumericUpDown();
+            this.imgWarning = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.nmIntensity)).BeginInit();
             this.pDomains.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmForcedIntensity)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgWarning)).BeginInit();
             this.SuspendLayout();
             // 
             // pSettings
@@ -128,6 +130,35 @@ namespace MultiEngine.UI
             this.pDomains.TabIndex = 1;
             this.pDomains.Tag = "color:dark1";
             // 
+            // tbNewDomain
+            // 
+            this.tbNewDomain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tbNewDomain.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbNewDomain.ForeColor = System.Drawing.Color.White;
+            this.tbNewDomain.Location = new System.Drawing.Point(7, 254);
+            this.tbNewDomain.Name = "tbNewDomain";
+            this.tbNewDomain.Size = new System.Drawing.Size(88, 22);
+            this.tbNewDomain.TabIndex = 166;
+            this.tbNewDomain.Tag = "color:normal";
+            // 
+            // bAddDomain
+            // 
+            this.bAddDomain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bAddDomain.BackColor = System.Drawing.Color.Gray;
+            this.bAddDomain.FlatAppearance.BorderSize = 0;
+            this.bAddDomain.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bAddDomain.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.bAddDomain.ForeColor = System.Drawing.Color.White;
+            this.bAddDomain.Location = new System.Drawing.Point(110, 252);
+            this.bAddDomain.Name = "bAddDomain";
+            this.bAddDomain.Size = new System.Drawing.Size(88, 24);
+            this.bAddDomain.TabIndex = 165;
+            this.bAddDomain.TabStop = false;
+            this.bAddDomain.Tag = "color:light1";
+            this.bAddDomain.Text = "Add Domain";
+            this.bAddDomain.UseVisualStyleBackColor = false;
+            this.bAddDomain.Click += new System.EventHandler(this.bAddDomain_Click);
+            // 
             // btnUnselectDomains
             // 
             this.btnUnselectDomains.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -179,35 +210,6 @@ namespace MultiEngine.UI
             this.lbMemoryDomains.Size = new System.Drawing.Size(198, 210);
             this.lbMemoryDomains.TabIndex = 0;
             this.lbMemoryDomains.Tag = "color:dark2";
-            // 
-            // bAddDomain
-            // 
-            this.bAddDomain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bAddDomain.BackColor = System.Drawing.Color.Gray;
-            this.bAddDomain.FlatAppearance.BorderSize = 0;
-            this.bAddDomain.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bAddDomain.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.bAddDomain.ForeColor = System.Drawing.Color.White;
-            this.bAddDomain.Location = new System.Drawing.Point(110, 252);
-            this.bAddDomain.Name = "bAddDomain";
-            this.bAddDomain.Size = new System.Drawing.Size(88, 24);
-            this.bAddDomain.TabIndex = 165;
-            this.bAddDomain.TabStop = false;
-            this.bAddDomain.Tag = "color:light1";
-            this.bAddDomain.Text = "Add Domain";
-            this.bAddDomain.UseVisualStyleBackColor = false;
-            this.bAddDomain.Click += new System.EventHandler(this.bAddDomain_Click);
-            // 
-            // tbNewDomain
-            // 
-            this.tbNewDomain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.tbNewDomain.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbNewDomain.ForeColor = System.Drawing.Color.White;
-            this.tbNewDomain.Location = new System.Drawing.Point(7, 254);
-            this.tbNewDomain.Name = "tbNewDomain";
-            this.tbNewDomain.Size = new System.Drawing.Size(88, 22);
-            this.tbNewDomain.TabIndex = 166;
-            this.tbNewDomain.Tag = "color:normal";
             // 
             // tbName
             // 
@@ -274,12 +276,23 @@ namespace MultiEngine.UI
             0,
             0});
             // 
+            // imgWarning
+            // 
+            this.imgWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.imgWarning.Location = new System.Drawing.Point(595, 307);
+            this.imgWarning.Name = "imgWarning";
+            this.imgWarning.Size = new System.Drawing.Size(35, 34);
+            this.imgWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgWarning.TabIndex = 171;
+            this.imgWarning.TabStop = false;
+            // 
             // EngineSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.ClientSize = new System.Drawing.Size(736, 353);
+            this.Controls.Add(this.imgWarning);
             this.Controls.Add(this.nmForcedIntensity);
             this.Controls.Add(this.cbForceIntensity);
             this.Controls.Add(this.label2);
@@ -299,6 +312,7 @@ namespace MultiEngine.UI
             this.pDomains.ResumeLayout(false);
             this.pDomains.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmForcedIntensity)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgWarning)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -320,5 +334,6 @@ namespace MultiEngine.UI
         private System.Windows.Forms.Label label2;
         public System.Windows.Forms.CheckBox cbForceIntensity;
         private System.Windows.Forms.NumericUpDown nmForcedIntensity;
+        private System.Windows.Forms.PictureBox imgWarning;
     }
 }

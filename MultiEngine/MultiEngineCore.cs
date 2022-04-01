@@ -26,9 +26,9 @@ namespace MultiEngine
             List<BlastUnit> bus = new List<BlastUnit>();
             if (pack == null) return new BlastLayer(bus);
 
-            for (int settingInd = 0; settingInd < pack.WeightedSettings.Count; settingInd++)
+            for (int settingInd = 0; settingInd < pack.Settings.Count; settingInd++)
             {
-                var setting = pack.WeightedSettings[settingInd];
+                var setting = pack.Settings[settingInd];
                 //lastUsedIndices[setting.EngineIndex()] = settingInd;//For updating UI
                 setting.ApplyPartial();
                 long intensity = RtcCore.Intensity;

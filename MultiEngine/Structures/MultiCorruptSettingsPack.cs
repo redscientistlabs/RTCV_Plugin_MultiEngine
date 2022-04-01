@@ -11,48 +11,30 @@ namespace MultiEngine.Structures
     public class MultiCorruptSettingsPack
     {
         //TODO: remove weighted stuff
-        public List<MCSettingsBase> WeightedSettings { get; private set; }
-        private static Random rand;
-
-        public double RatioSum
-        {
-            get; private set;
-        }
-
-        static MultiCorruptSettingsPack()
-        {
-            rand = new Random();
-        }
+        public List<MCSettingsBase> Settings { get; private set; }
+        private static Random rand = new Random();
 
         public MultiCorruptSettingsPack()
         {
             //Weighted doesn't work :/
-            WeightedSettings = new List<MCSettingsBase>();
+            Settings = new List<MCSettingsBase>();
         }
 
         public void AddSetting(MCSettingsBase setting)
         {
-            WeightedSettings.Add(setting);
+            Settings.Add(setting);
             //RatioSum = WeightedSettings.Sum(p => p.Weight);
         }
         public void RemoveSetting(MCSettingsBase setting)
         {
-            WeightedSettings.Remove(setting);
+            Settings.Remove(setting);
            // RatioSum = WeightedSettings.Sum(p => p.Weight);
-        }
-
-        /// <summary>
-        /// Update main UI so there is no desync
-        /// </summary>
-        public void ApplyMostRecentUISettings()
-        {
-
         }
 
         public MCSettingsBase GetRandomSettings()
         {
-            if (WeightedSettings.Count == 0) return null;
-            else return WeightedSettings[rand.Next(WeightedSettings.Count)];
+            if (Settings.Count == 0) return null;
+            else return Settings[rand.Next(Settings.Count)];
             //double numericValue = r.NextDouble() * RatioSum;
 
             //foreach (var engineSettings in WeightedSettings)

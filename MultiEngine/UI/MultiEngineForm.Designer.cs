@@ -30,7 +30,6 @@ namespace MultiEngine.UI
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MultiEngineForm));
-            this.btnCorrupt = new System.Windows.Forms.Button();
             this.bAdd = new System.Windows.Forms.Button();
             this.lbEngines = new System.Windows.Forms.ListBox();
             this.bSave = new System.Windows.Forms.Button();
@@ -38,35 +37,9 @@ namespace MultiEngine.UI
             this.bUp = new System.Windows.Forms.Button();
             this.bDown = new System.Windows.Forms.Button();
             this.gbMain = new System.Windows.Forms.GroupBox();
-            this.imgWarning = new System.Windows.Forms.PictureBox();
             this.label14 = new System.Windows.Forms.Label();
             this.gbMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imgWarning)).BeginInit();
             this.SuspendLayout();
-            // 
-            // btnCorrupt
-            // 
-            this.btnCorrupt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.btnCorrupt.FlatAppearance.BorderColor = System.Drawing.Color.Black;
-            this.btnCorrupt.FlatAppearance.BorderSize = 0;
-            this.btnCorrupt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCorrupt.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.btnCorrupt.ForeColor = System.Drawing.Color.OrangeRed;
-            this.btnCorrupt.Image = ((System.Drawing.Image)(resources.GetObject("btnCorrupt.Image")));
-            this.btnCorrupt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCorrupt.Location = new System.Drawing.Point(341, 12);
-            this.btnCorrupt.Margin = new System.Windows.Forms.Padding(4);
-            this.btnCorrupt.Name = "btnCorrupt";
-            this.btnCorrupt.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
-            this.btnCorrupt.Size = new System.Drawing.Size(35, 16);
-            this.btnCorrupt.TabIndex = 152;
-            this.btnCorrupt.TabStop = false;
-            this.btnCorrupt.Tag = "color:dark2";
-            this.btnCorrupt.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCorrupt.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnCorrupt.UseVisualStyleBackColor = false;
-            this.btnCorrupt.Visible = false;
-            this.btnCorrupt.Click += new System.EventHandler(this.btnCorrupt_Click);
             // 
             // bAdd
             // 
@@ -177,10 +150,8 @@ namespace MultiEngine.UI
             // 
             // gbMain
             // 
-            this.gbMain.Controls.Add(this.imgWarning);
             this.gbMain.Controls.Add(this.label14);
             this.gbMain.Controls.Add(this.bAdd);
-            this.gbMain.Controls.Add(this.btnCorrupt);
             this.gbMain.Controls.Add(this.bDown);
             this.gbMain.Controls.Add(this.bSave);
             this.gbMain.Controls.Add(this.bUp);
@@ -191,16 +162,6 @@ namespace MultiEngine.UI
             this.gbMain.Size = new System.Drawing.Size(420, 148);
             this.gbMain.TabIndex = 167;
             this.gbMain.TabStop = false;
-            // 
-            // imgWarning
-            // 
-            this.imgWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.imgWarning.Location = new System.Drawing.Point(382, 9);
-            this.imgWarning.Name = "imgWarning";
-            this.imgWarning.Size = new System.Drawing.Size(23, 21);
-            this.imgWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.imgWarning.TabIndex = 168;
-            this.imgWarning.TabStop = false;
             // 
             // label14
             // 
@@ -231,14 +192,11 @@ namespace MultiEngine.UI
             this.Text = "Multi Engine";
             this.gbMain.ResumeLayout(false);
             this.gbMain.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imgWarning)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        public System.Windows.Forms.Button btnCorrupt;
         private System.Windows.Forms.Button bAdd;
         private System.Windows.Forms.ListBox lbEngines;
         private System.Windows.Forms.Button bSave;
@@ -247,6 +205,5 @@ namespace MultiEngine.UI
         private System.Windows.Forms.Button bDown;
         private System.Windows.Forms.GroupBox gbMain;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.PictureBox imgWarning;
     }
 }

@@ -48,40 +48,13 @@ namespace MultiEngine.Structures
                 //Cache spec
                 C.CacheMasterSpec();
 
-                //PartialSpec pspec =  AllSpec.CorruptCoreSpec.GetPartialSpec();
-                //var precision = RtcCore.CurrentPrecision;
-
                 var domains = RTCV.NetCore.AllSpec.UISpec["SELECTEDDOMAINS"] as string[];
                 if (domains == null || domains.Length == 0)
                 {
                     MessageBox.Show("Can't corrupt with no domains selected.");
                     return null;
                 }
-
-                //Do setup on the rtc side
-                //foreach (var item in UI.MultiEngineForm.Pack.WeightedSettings)
-                //{
-                //    item.PreCorrupt();
-                //}
-
-
-                // TODO REMOVE THIS AFTER OPTIMIZATION
-                //if (S.GET<CoreForm>().AutoCorrupt)
-                //{
-                //    S.GET<CoreForm>().AutoCorrupt = false;
-                //}
-
-
-                //S.GET<StashHistoryForm>().DontLoadSelectedStash = true;
-                ////Corrupt here
-                //var last = C.GetEngineArray();
                 return MultiEngineCore.Corrupt();
-
-                //AllSpec.CorruptCoreSpec.Update(pspec, false, false);
-                //RtcCore.CurrentPrecision = precision;
-                //LocalNetCoreRouter.Route(PluginRouting.Endpoints.RTC_SIDE, PluginRouting.Commands.RESYNC_SETTINGS, last, true);
-                //return res;
-
             }
             catch
             {
@@ -89,15 +62,9 @@ namespace MultiEngine.Structures
             }
             finally
             {
-                //Revert entire spec on this side
+                //Revert entire spec on this side, no update
                 C.RestoreMasterSpec(false);
             }
-            //return UI.MultiEngineForm.InnerCorrupt(false);
-
-            //if (success)
-            //{
-            //    S.GET<StashHistoryForm>().RefreshStashHistorySelectLast();
-            //}
         }
 
 
@@ -111,8 +78,6 @@ namespace MultiEngine.Structures
         void ICorruptionEngine.OnDeselect()
         {
             S.GET<MultiEngineForm>().OnEngineDeselected();
-            //resync other engines
-            //S.GET<CorruptionEngineForm>().ResyncAllEngines();
         }
     }
 }

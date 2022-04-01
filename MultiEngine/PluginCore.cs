@@ -34,11 +34,12 @@ namespace MultiEngine
         public bool Start(RTCSide side)
         {
 
-            C.InitMasterSpec();
+            C.Init();
 
             if (side == RTCSide.Client)
             {
                 connectorEMU = new PluginConnectorEMU();
+                LocalNetCoreRouter.Route(PluginRouting.Endpoints.RTC_SIDE, PluginRouting.Commands.RESYNC_SETTINGS, synced:true);
             }
             else if (side == RTCSide.Server)
             {

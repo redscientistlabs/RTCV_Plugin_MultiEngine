@@ -75,14 +75,7 @@
     <Compile Include="Routing\PluginConnectorRTC.cs" />
     <Compile Include="Routing\RoutingConstants.cs" />
     <Compile Include="Structures\InterfaceImplementation.cs" />
-    <Compile Include="Structures\MCClusterSettings.cs" />
-    <Compile Include="Structures\MCDistortionSettings.cs" />
-    <Compile Include="Structures\MCFreezeSettings.cs" />
-    <Compile Include="Structures\MCHellgenieSettings.cs" />
-    <Compile Include="Structures\MCNightmareSettings.cs" />
-    <Compile Include="Structures\MCPipeSettings.cs" />
     <Compile Include="Structures\MCSettingsBase.cs" />
-    <Compile Include="Structures\MCVectorSettings.cs" />
     <Compile Include="Structures\MultiCorruptSettingsPack.cs" />
     <Compile Include="UI\EngineSettingsForm.cs">
       <SubType>Form</SubType>
@@ -90,7 +83,6 @@
     <Compile Include="UI\EngineSettingsForm.Designer.cs">
       <DependentUpon>EngineSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\EngineSyncObjects\EngineSync.cs" />
     <Compile Include="UI\MultiEngineForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,6 +127,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UI\EngineSyncObjects\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\Bizhawk-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.5.5\build\Fody.targets" Condition="Exists('..\..\Bizhawk-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.5.5\build\Fody.targets')" />

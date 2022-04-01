@@ -17,20 +17,28 @@ namespace MultiEngine.Structures
     [Ceras.MemberConfig(TargetMember.All)]
     public class MCSettingsBase
     {
+        [JsonProperty]
         public string DisplayName { get; set; } = null;
+        [JsonProperty]
         public long ForcedIntensity { get; set; } = -1;
+        [JsonProperty]
         public double Percentage { get; set; } = 1.0;
         public int Alignment => cachedSpec.Get<int>(RTCSPEC.CORE_CURRENTALIGNMENT);
         public int Precision => cachedSpec.Get<int>(RTCSPEC.CORE_CURRENTPRECISION);
-        public int EngineIndex { get; private set; }
+        public int EngineIndex => C.EngineToIndex(EngineType);
 
+        [JsonProperty]
         public CorruptionEngine EngineType { get; private set; }
+        [JsonProperty]
         public string[] Domains { get; set; } = null;
 
         protected string PercentageString { get { if (ForcedIntensity > 0) return $"[{ForcedIntensity,7}]"; else return $"[{Percentage * 100.0,6:0.00}%]"; } }
 
         [Ceras.Include]
+        [JsonRequired]
+#pragma warning disable IDE0044 // Add readonly modifier
         private PartialSpec cachedSpec = null;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         [Ceras.Exclude]
         protected PartialSpec CachedSpec => cachedSpec;
@@ -48,13 +56,12 @@ namespace MultiEngine.Structures
         /// </summary>
         public MCSettingsBase(PartialSpec template)
         {
-            PartialSpec partial = new PartialSpec(C.SPEC_NAME);
+            PartialSpec partial = new PartialSpec(C.TARGET_SPEC_NAME);
             if(template != null) partial.Insert(template);
 
             partial[RTCSPEC.CORE_CURRENTPRECISION] = RtcCore.CurrentPrecision;
             partial[RTCSPEC.CORE_CURRENTALIGNMENT] = RtcCore.Alignment;
             cachedSpec = partial;
-            EngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
             EngineType = RtcCore.SelectedEngine;
             UpdateCache();
         }
@@ -70,67 +77,42 @@ namespace MultiEngine.Structures
 
         private void UpdateCache()
         {
-            //Update all 
             cachedSpec.ExtractFrom(AllSpec.CorruptCoreSpec.GetPartialSpec());
-
-            //cachedSpec = PopulatePartial(CreateBaseUpdateSpec());
-        }
-
-        ///// <summary>
-        ///// Override to set up a partial spec.
-        ///// </summary>
-        ///// <param name="partial"></param>
-        ///// <returns></returns>
-        //protected virtual PartialSpec BuildUpdateSpec(PartialSpec partial);
-        //{
-        //    return partial;
-        //}
-
-        //private PartialSpec PopulatePartial(PartialSpec partial)
-        //{
-
-        //    var keyList = partial.GetKeys();
-        //    foreach (var key in keyList)
-        //    {
-        //        partial[key] = AllSpec.CorruptCoreSpec[key];
-        //    }
-        //    return partial;
-        //}
-
-        ////TODO: just save the partial spec to the file with ceras instead of caching
-        //private PartialSpec CreateBaseUpdateSpec()
-        //{
-        //    PartialSpec partial = new PartialSpec(C.SPEC_NAME);
-        //    partial[RTCSPEC.CORE_CURRENTPRECISION] = RtcCore.CurrentPrecision;
-        //    partial[RTCSPEC.CORE_CURRENTALIGNMENT] = RtcCore.Alignment;
-        //    return partial;
-        //}
-
-        //TODO: remove
-        [Obsolete]
-        public virtual void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
-        {
-            SyncObjectSingleton.FormExecute(() =>
-            {
-                if (updateSelected)
-                {
-                    form.cbSelectedEngine.SelectedIndex = EngineIndex;
-                    form.cbCustomPrecision.SelectedIndex = C.PrecisionToIndex(Precision);
-                    form.nmAlignment.Value = Alignment;
-                }
-            });
         }
 
         public virtual void Extract(CorruptionEngineForm form)
         {
-            EngineIndex = form.cbSelectedEngine.SelectedIndex;
             EngineType = RtcCore.SelectedEngine;
             UpdateCache();
         }
 
         public override string ToString()
         {
-            return $"{PercentageString} {DisplayName ?? "TODO"} ";
+            return $"{PercentageString} {DisplayName ?? "TODO"} " + GetTypeSpecificStr();
+        }
+
+        //TODO: fill out
+        private string GetTypeSpecificStr()
+        {
+            switch (EngineType)
+            {
+                case CorruptionEngine.NIGHTMARE:
+                    return $"";
+                case CorruptionEngine.HELLGENIE:
+                    return $"";
+                case CorruptionEngine.DISTORTION:
+                    return $"";
+                case CorruptionEngine.FREEZE:
+                    return $"";
+                case CorruptionEngine.PIPE:
+                    return $"";
+                case CorruptionEngine.VECTOR:
+                    return $"";
+                case CorruptionEngine.CLUSTER:
+                    return $"";
+                default:
+                    return "NOT SUPPORTED";
+            }
         }
 
         //Switch

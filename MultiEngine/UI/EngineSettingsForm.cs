@@ -48,6 +48,7 @@ namespace MultiEngine.UI
             //await Task.Delay(1500);
             //mySettings.cbCustomPrecision.SelectedIndex = C.PrecisionToIndex(previousPrecision);
             //SetPrecisionIndex(previousPrecision);
+            mySettings.cbSelectedEngine.SelectedIndex = C.NightmareEngineIndex;
             bAdd.Enabled = true;
         }
 
@@ -82,12 +83,9 @@ namespace MultiEngine.UI
 
         private async void ShownEdit(object sender, EventArgs e)
         {
-            //this.Enabled = false;
-            //await Task.Delay(1500);
             edit.ApplyPartial();
             mySettings.cbSelectedEngine.SelectedIndex = edit.EngineIndex;
             mySettings.ResyncAllEngines();
-            //edit.UpdateUI(mySettings,true);
             bAdd.Enabled = true;
             nmIntensity.Value = (decimal)(edit.Percentage * 100.0);
             tbName.Text = edit.DisplayName ?? "";
@@ -115,20 +113,35 @@ namespace MultiEngine.UI
                 nmForcedIntensity.Maximum = maxintensity;
             }
 
-            //var mainSettings = S.GET<CorruptionEngineForm>();
-
             mySettings = S.GET<CorruptionEngineForm>();
+            mySettings.cbSelectedEngine.SelectedIndexChanged += CheckEngineCompatability;
+
+            //Detach from previous location
             mySettings.Hide();
             mySettings.Parent?.Controls.Remove(mySettings);
+            //Anchor to this
             mySettings.AnchorToPanel(pSettings);
             mySettings.Show();
+
+            imgWarning.Image = System.Drawing.SystemIcons.Warning.ToBitmap();
+            ToolTip warningToolTip = new ToolTip();
+            warningToolTip.ToolTipIcon = ToolTipIcon.Warning;
+            warningToolTip.ToolTipTitle = "Engine not supported";
+            warningToolTip.SetToolTip(imgWarning, "The currently selected engine is not supported");
+            imgWarning.Visible = false;
 
             lbMemoryDomains.Items.AddRange(S.GET<MemoryDomainsForm>().lbMemoryDomains.Items);
         }
 
+        private void CheckEngineCompatability(object sender, EventArgs e)
+        {
+            bool supported = C.IsEngineSupported(((ComboBox)sender).SelectedIndex);
+            bAdd.Enabled = supported;
+            imgWarning.Visible = !supported;
+        }
+
         private void bAdd_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine($"Selected Engine: {mySettings.cbSelectedEngine.SelectedItem}");
             OutputSettings = null;
 
             switch (RtcCore.SelectedEngine)
@@ -160,11 +173,19 @@ namespace MultiEngine.UI
 
             if(OutputSettings == null)
             {
-                MessageBox.Show("Selected engine is not supported for MultiEngine");
+                MessageBox.Show("We aren't sure how you got here, but the selected engine is not supported for MultiEngine");
                 return;
             }
 
-            if (!string.IsNullOrWhiteSpace(tbName.Text)) OutputSettings.DisplayName = tbName.Text;
+            if (!string.IsNullOrWhiteSpace(tbName.Text)) { 
+                OutputSettings.DisplayName = tbName.Text;
+            }
+            else
+            {
+                OutputSettings.DisplayName = C.EngineString(RtcCore.SelectedEngine);
+            }
+
+
             if (cbForceIntensity.Checked)
             {
                 OutputSettings.ForcedIntensity = (long)nmForcedIntensity.Value;
@@ -175,8 +196,8 @@ namespace MultiEngine.UI
             }
 
             OutputSettings.Extract(mySettings);
-            string[] lst = new List<string>(lbMemoryDomains.SelectedItems.Cast<string>()).ToArray();
-            OutputSettings.Domains = lst;
+            string[] domainList = new List<string>(lbMemoryDomains.SelectedItems.Cast<string>()).ToArray();
+            OutputSettings.Domains = domainList;
             DialogResult = DialogResult.OK;
             
             Close();
@@ -184,10 +205,11 @@ namespace MultiEngine.UI
 
         private void EngineSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            mySettings.cbCustomPrecision.SelectedIndexChanged -= CheckEngineCompatability;
+            //Required for RestoreToPreviousPanel to work
             this.Visible = false;
+            //Give the settings control back to rtc window
             mySettings.RestoreToPreviousPanel();
-            //TODO:resync in MultiEngineForm
-            //mySettings.ResyncAllEngines();
         }
 
         private void btnSelectAll_Click(object sender, EventArgs e)

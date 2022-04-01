@@ -26,9 +26,10 @@ namespace MultiEngine
             NetCoreAdvancedMessage message = e.message as NetCoreAdvancedMessage;
             switch (message.Type)
             {
-                //case PluginRouting.Commands.RESYNC_SETTINGS:
-                //    //S.GET<MultiEngineForm>().Resync(message.objectValue as int[]);
-                //    break;
+                case PluginRouting.Commands.RESYNC_SETTINGS:
+                    if(!S.ISNULL<MultiEngineForm>())
+                        S.GET<MultiEngineForm>().PushSettings();
+                    break;
                 default:
                     break;
             }

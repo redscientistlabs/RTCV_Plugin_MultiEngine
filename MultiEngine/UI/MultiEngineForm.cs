@@ -42,7 +42,6 @@ namespace MultiEngine.UI
         public MultiEngineForm()
         {
             InitializeComponent();
-            //pack = new MultiCorruptSettingsPack();
             saveSerializer = CreateSerializer();
            
             ContextMenu menu = new ContextMenu(new MenuItem[]
@@ -70,9 +69,9 @@ namespace MultiEngine.UI
 
                         if (esf.ShowDialog() == DialogResult.OK)
                         {
-                            int idx = Pack.WeightedSettings.IndexOf(item);
-                            Pack.WeightedSettings.RemoveAt(idx);
-                            Pack.WeightedSettings.Insert(idx, esf.OutputSettings);
+                            int idx = Pack.Settings.IndexOf(item);
+                            Pack.Settings.RemoveAt(idx);
+                            Pack.Settings.Insert(idx, esf.OutputSettings);
                             UpdateList();
                             PushSettings();
                             S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
@@ -87,11 +86,6 @@ namespace MultiEngine.UI
             originalEngineForm = S.GET<CorruptionEngineForm>();
             lbEngines.ContextMenu = menu;
 
-            imgWarning.Image = System.Drawing.SystemIcons.Warning.ToBitmap();
-            ToolTip warningToolTip = new ToolTip();
-            warningToolTip.ToolTipIcon = ToolTipIcon.Warning;
-            warningToolTip.ToolTipTitle = "Desync Warning";
-            warningToolTip.SetToolTip(imgWarning, "Using multi engine will desync other engine controls.\r\nPlease update all fields including precision and alignment if using other engines");
             FormClosing += MultiEngineForm_FormClosing;
             //cbLimiterList.DisplayMember = "Name";
             //cbValueList.DisplayMember = "Name";
@@ -101,7 +95,7 @@ namespace MultiEngine.UI
 
 
 
-        private void PushSettings()
+        public void PushSettings()
         {
             LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
         }
@@ -111,51 +105,10 @@ namespace MultiEngine.UI
             corrupting = false;
         }
 
-        
-
-        
-
-        //Todo: remove
-        [Obsolete]
-        private void btnCorrupt_Click(object sender, EventArgs e)
-        {
-            //Corrupt();
-            //pack.GetRandomSettings
-            //int ct = (int)nmCorruptCT.Value;
-            //for (int i = 0; i < ct; i++)
-            //{
-            //    var s = pack.GetRandomSettings();
-            //    s.UpdateUI(S.GET<CorruptionEngineForm>());
-            //    S.GET<CoreForm>().ManualBlast(null, null);
-            //}
-
-            btnCorrupt.Enabled = false;
-            try
-            {
-                if (!corrupting && Pack.WeightedSettings.Count > 0)
-                {
-                    try
-                    {
-                        corrupting = true;
-                        //Corrupt();
-                    }
-                    finally
-                    {
-                        corrupting = false;
-                    }
-                }
-            }
-            finally
-            {
-                btnCorrupt.Enabled = true;
-            }
-        }
-
-        private async void bAdd_Click(object sender, EventArgs e)
+        private void bAdd_Click(object sender, EventArgs e)
         {
             //Cache before changes
             C.CacheMasterSpec();
-            //PartialSpec pspec = AllSpec.CorruptCoreSpec.GetPartialSpec();
             int multiEngineIndex = S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex;
             var f = new EngineSettingsForm();
             gbMain.Enabled = false;
@@ -163,19 +116,15 @@ namespace MultiEngine.UI
             {
                 Pack.AddSetting(f.OutputSettings);
                 UpdateList();
-                LocalNetCoreRouter.Route(PluginRouting.Endpoints.EMU_SIDE, PluginRouting.Commands.UPDATE_SETTINGS, Pack, true);
-                //TODO: remove?
-                //S.GET<MemoryDomainsForm>().RefreshDomainsAndKeepSelected();
+                PushSettings();
             }
-            //Reset spec
+            //Restore spec
             C.RestoreMasterSpec(true);
+            //Resync UI
             S.GET<CorruptionEngineForm>().ResyncAllEngines();
+            //Set us back to multi engine
             S.GET<CorruptionEngineForm>().cbSelectedEngine.SelectedIndex = multiEngineIndex;
             gbMain.Enabled = true;
-            //TODO: Make sure we are selected?
-            //RtcCore.SelectedEngine = CorruptionEngine.PLUGIN;
-            //AllSpec.CorruptCoreSpec.Update(RTCSPEC.CORE_SELECTEDENGINE, CorruptionEngine.PLUGIN);
-
         }
 
         void UpdateList()
@@ -183,9 +132,9 @@ namespace MultiEngine.UI
             lbEngines.SuspendLayout();
             lbEngines.Items.Clear();
 
-            for (int i = 0; i < Pack.WeightedSettings.Count; i++)
+            for (int i = 0; i < Pack.Settings.Count; i++)
             {
-                lbEngines.Items.Add(Pack.WeightedSettings[i]);
+                lbEngines.Items.Add(Pack.Settings[i]);
             }
             lbEngines.ResumeLayout();
         }
@@ -211,11 +160,11 @@ namespace MultiEngine.UI
             }
         }
 
-        //Copied from TCPLink.cs line 235
+        ////Copied from TCPLink.cs line 235
         private static CerasSerializer CreateSerializer()
         {
             var config = new SerializerConfig();
-            config.Advanced.PersistTypeCache = true;
+            config.Advanced.PersistTypeCache = false;
             config.Advanced.UseReinterpretFormatter = false; //While faster, leads to some weird bugs due to threading abuse
             config.Advanced.RespectNonSerializedAttribute = false;
             config.OnResolveFormatter.Add((c, t) =>
@@ -242,7 +191,7 @@ namespace MultiEngine.UI
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     Pack = saveSerializer.Deserialize<MultiCorruptSettingsPack>(File.ReadAllBytes(ofd.FileName));
-                    //Pack = JsonConvert.DeserializeObject<MultiCorruptSettingsPack>(File.ReadAllText(ofd.FileName), new MultiEngineJsonConverter());
+                    //Pack = JsonConvert.DeserializeObject<MultiCorruptSettingsPack>(File.ReadAllText(ofd.FileName));
                     UpdateList();
                     PushSettings();
                 }
@@ -257,9 +206,9 @@ namespace MultiEngine.UI
                 var idx = lbEngines.SelectedIndex;
                 if (idx > 0)
                 {
-                    var item = Pack.WeightedSettings[idx];
-                    Pack.WeightedSettings.RemoveAt(idx);
-                    Pack.WeightedSettings.Insert(idx - 1, item);
+                    var item = Pack.Settings[idx];
+                    Pack.Settings.RemoveAt(idx);
+                    Pack.Settings.Insert(idx - 1, item);
                     UpdateList();
                     PushSettings();
                     lbEngines.SelectedIndex = idx - 1;
@@ -274,9 +223,9 @@ namespace MultiEngine.UI
                 var idx = lbEngines.SelectedIndex;
                 if (idx < (lbEngines.Items.Count-1))
                 {
-                    var item = Pack.WeightedSettings[idx];
-                    Pack.WeightedSettings.RemoveAt(idx);
-                    Pack.WeightedSettings.Insert(idx + 1, item);
+                    var item = Pack.Settings[idx];
+                    Pack.Settings.RemoveAt(idx);
+                    Pack.Settings.Insert(idx + 1, item);
                     UpdateList();
                     PushSettings();
                     lbEngines.SelectedIndex = idx + 1;
@@ -286,12 +235,12 @@ namespace MultiEngine.UI
 
         public void OnEngineSelected()
         {
-            //pspec = null;//Copy main spec //AllSpec.CorruptCoreSpec.GetPartialSpec();
+            
         }
 
         public void OnEngineDeselected()
         {
-            //AllSpec.CorruptCoreSpec.Update(pspec, true, true); //Revert entire spec
+
         }
 
     }
