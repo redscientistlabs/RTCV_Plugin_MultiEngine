@@ -33,13 +33,13 @@ namespace MultiEngine.Structures
         public override void Extract(CorruptionEngineForm form)
         {
             base.Extract(form);
-            Delay = (int)form.distortionEngineControl.nmDistortionDelay.Value;
+            Delay = (int)form.DistortionEngineControl.nmDistortionDelay.Value;
         }
 
         public override void UpdateUI(CorruptionEngineForm form, bool updateSelected = true)
         {
             base.UpdateUI(form, updateSelected);
-            form.distortionEngineControl.nmDistortionDelay.Value = Delay;
+            form.DistortionEngineControl.nmDistortionDelay.Value = Delay;
         }
 
         public override BlastUnit[] GetBlastUnits(string domain, long address, int precision, int alignment)
