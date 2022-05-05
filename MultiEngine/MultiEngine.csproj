@@ -221,12 +221,16 @@
     <Compile Include="Structures\MCSettingsBase.cs" />
     <Compile Include="Structures\MCVectorSettings.cs" />
     <Compile Include="Structures\MultiCorruptSettingsPack.cs" />
-    <Compile Include="UI\EngineSettingsForm.cs" />
+    <Compile Include="UI\EngineSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\EngineSettingsForm.Designer.cs">
       <DependentUpon>EngineSettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\EngineSyncObjects\EngineSync.cs" />
-    <Compile Include="UI\MultiEngineForm.cs" />
+    <Compile Include="UI\MultiEngineForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\MultiEngineForm.Designer.cs">
       <DependentUpon>MultiEngineForm.cs</DependentUpon>
     </Compile>
