@@ -221,12 +221,16 @@
     <Compile Include="Structures\MCSettingsBase.cs" />
     <Compile Include="Structures\MCVectorSettings.cs" />
     <Compile Include="Structures\MultiCorruptSettingsPack.cs" />
-    <Compile Include="UI\EngineSettingsForm.cs" />
+    <Compile Include="UI\EngineSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\EngineSettingsForm.Designer.cs">
       <DependentUpon>EngineSettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\EngineSyncObjects\EngineSync.cs" />
-    <Compile Include="UI\MultiEngineForm.cs" />
+    <Compile Include="UI\MultiEngineForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\MultiEngineForm.Designer.cs">
       <DependentUpon>MultiEngineForm.cs</DependentUpon>
     </Compile>
@@ -277,9 +281,9 @@
     <Error Condition="!Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.5.7.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.5.7.0\build\Costura.Fody.props'))" />
     <Error Condition="!Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets'))" />
     <Error Condition="!Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
-    <Error Condition="!Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.6.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.6.0\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.6.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.6.1\build\Fody.targets'))" />
   </Target>
   <Import Project="..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets" Condition="Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets')" />
   <Import Project="..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
-  <Import Project="..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.6.0\build\Fody.targets" Condition="Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.6.0\build\Fody.targets')" />
+  <Import Project="..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.6.1\build\Fody.targets" Condition="Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.6.1\build\Fody.targets')" />
 </Project>
