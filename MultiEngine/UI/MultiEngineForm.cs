@@ -152,6 +152,7 @@ namespace MultiEngine.UI
                 }
                 catch (IndexOutOfRangeException ex)
                 {
+                    _ = ex;
                     //bad but this is just a temp func anyway
                 }
             });

@@ -20,7 +20,7 @@ namespace MultiEngine.UI
 {
     public partial class EngineSettingsForm : ComponentForm, IColorize
     {
-        string curEngine = "None";
+        //string curEngine = "None";
         CorruptionEngineForm mySettings;
 
         private CorruptionEngineForm mainSettings;
