@@ -21,12 +21,15 @@ namespace MultiEngine.UI
     public partial class EngineSettingsForm : ComponentForm, IColorize
     {
         //string curEngine = "None";
-        CorruptionEngineForm mySettings;
+        CorruptionEngineForm settingsControl;
 
         //private CorruptionEngineForm mainSettings;
         public MCSettingsBase OutputSettings { get; private set; } = null;
         MCSettingsBase edit = null;
         //private MemoryDomainsForm myDomains;
+
+        bool settingsPopoutAllowed = false;
+        Panel prevPanel = null;
 
         public EngineSettingsForm()
         {
@@ -48,7 +51,7 @@ namespace MultiEngine.UI
             //await Task.Delay(1500);
             //mySettings.cbCustomPrecision.SelectedIndex = C.PrecisionToIndex(previousPrecision);
             //SetPrecisionIndex(previousPrecision);
-            mySettings.cbSelectedEngine.SelectedIndex = C.NightmareEngineIndex;
+            settingsControl.cbSelectedEngine.SelectedIndex = C.NightmareEngineIndex;
             bAdd.Enabled = true;
         }
 
@@ -84,8 +87,8 @@ namespace MultiEngine.UI
         private async void ShownEdit(object sender, EventArgs e)
         {
             edit.ApplyPartial();
-            mySettings.cbSelectedEngine.SelectedIndex = edit.EngineIndex;
-            mySettings.ResyncAllEngines();
+            settingsControl.cbSelectedEngine.SelectedIndex = edit.EngineIndex;
+            settingsControl.ResyncAllEngines();
             bAdd.Enabled = true;
             nmIntensity.Value = (decimal)(edit.Percentage * 100.0);
             tbName.Text = edit.DisplayName ?? "";
@@ -113,22 +116,40 @@ namespace MultiEngine.UI
                 nmForcedIntensity.Maximum = maxintensity;
             }
 
-            mySettings = S.GET<CorruptionEngineForm>();
-            mySettings.cbSelectedEngine.SelectedIndexChanged += CheckEngineCompatability;
+            settingsControl = S.GET<CorruptionEngineForm>();
+            settingsControl.cbSelectedEngine.SelectedIndexChanged += CheckEngineCompatability;
 
             //Detach from previous location
-            mySettings.Hide();
-            mySettings.Parent?.Controls.Remove(mySettings);
             //Anchor to this
-            mySettings.AnchorToPanel(pSettings);
-            mySettings.Show();
-
+            settingsPopoutAllowed = settingsControl.popoutAllowed;
+            settingsControl.popoutAllowed = false;
+            prevPanel = settingsControl.Parent as Panel;
+            settingsControl.AnchorToPanel(pSettings);
+            settingsControl.Show();
+           
             imgWarning.Image = System.Drawing.SystemIcons.Warning.ToBitmap();
             ToolTip warningToolTip = new ToolTip();
             warningToolTip.ToolTipIcon = ToolTipIcon.Warning;
             warningToolTip.ToolTipTitle = "Engine not supported";
             warningToolTip.SetToolTip(imgWarning, "The currently selected engine is not supported");
             imgWarning.Visible = false;
+            warningToolTip.AutoPopDelay = 1200000;
+
+
+            imgDomainOverrideInfo.Image = System.Drawing.SystemIcons.Information.ToBitmap();
+            ToolTip domainOverrideInfoToolTip = new ToolTip();
+            domainOverrideInfoToolTip.ToolTipIcon = ToolTipIcon.Info;
+            domainOverrideInfoToolTip.ToolTipTitle = "Domain Overrides";
+            domainOverrideInfoToolTip.SetToolTip(imgDomainOverrideInfo, "If set, these selected domains will be used\r\ninstead of the domains selected in the\r\nmain window's \"Memory Domains\" panel.");
+            domainOverrideInfoToolTip.AutoPopDelay = 1200000;
+
+            imgIntensityInfo.Image = System.Drawing.SystemIcons.Information.ToBitmap();
+            ToolTip intensityInfoToolTip = new ToolTip();
+            intensityInfoToolTip.ToolTipIcon = ToolTipIcon.Info;
+            intensityInfoToolTip.ToolTipTitle = "Intensity Settings";
+            intensityInfoToolTip.SetToolTip(imgIntensityInfo, "Set the percentage of the intensity slider\r\nto be used with this engine setting.\r\nChecking Forced Intensity will override\r\nthe intensity slider.");
+            intensityInfoToolTip.AutoPopDelay = 1200000;
+
 
             lbMemoryDomains.Items.AddRange(S.GET<MemoryDomainsForm>().lbMemoryDomains.Items);
         }
@@ -185,7 +206,6 @@ namespace MultiEngine.UI
                 OutputSettings.DisplayName = C.EngineString(RtcCore.SelectedEngine);
             }
 
-
             if (cbForceIntensity.Checked)
             {
                 OutputSettings.ForcedIntensity = (long)nmForcedIntensity.Value;
@@ -195,7 +215,7 @@ namespace MultiEngine.UI
                 OutputSettings.Percentage = (double)nmIntensity.Value / 100.0;
             }
 
-            OutputSettings.Extract(mySettings);
+            OutputSettings.Extract(settingsControl);
             string[] domainList = new List<string>(lbMemoryDomains.SelectedItems.Cast<string>()).ToArray();
             OutputSettings.Domains = domainList;
             DialogResult = DialogResult.OK;
@@ -205,11 +225,16 @@ namespace MultiEngine.UI
 
         private void EngineSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            mySettings.cbCustomPrecision.SelectedIndexChanged -= CheckEngineCompatability;
-            //Required for RestoreToPreviousPanel to work
+            settingsControl.cbCustomPrecision.SelectedIndexChanged -= CheckEngineCompatability;
+            //Needed for restore to work
             this.Visible = false;
             //Give the settings control back to rtc window
-            mySettings.RestoreToPreviousPanel();
+            //settingsControl.RestoreToPreviousPanel();
+            settingsControl.AnchorToPanel(prevPanel);
+            settingsControl.AnchorToPanel(prevPanel);
+
+            //Restore
+            settingsControl.popoutAllowed = settingsPopoutAllowed;
         }
 
         private void btnSelectAll_Click(object sender, EventArgs e)

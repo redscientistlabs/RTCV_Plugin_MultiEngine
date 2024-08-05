@@ -33,6 +33,9 @@ namespace MultiEngine.Structures
         public string[] Domains { get; set; } = null;
 
         protected string PercentageString { get { if (ForcedIntensity > 0) return $"[{ForcedIntensity,7}]"; else return $"[{Percentage * 100.0,6:0.00}%]"; } }
+        [JsonProperty]
+        public string[] ExtraData { get; set; } = null;
+
 
         [Ceras.Include]
         [JsonRequired]
@@ -41,7 +44,7 @@ namespace MultiEngine.Structures
 #pragma warning restore IDE0044 // Add readonly modifier
 
         [Ceras.Exclude]
-        protected PartialSpec CachedSpec => cachedSpec;
+        public PartialSpec CachedSpec => cachedSpec;
 
         /// <summary>
         /// for ceras
@@ -63,6 +66,27 @@ namespace MultiEngine.Structures
             partial[RTCSPEC.CORE_CURRENTALIGNMENT] = RtcCore.Alignment;
             cachedSpec = partial;
             EngineType = RtcCore.SelectedEngine;
+
+            //TODO: get limiter and value strings
+            if(EngineType == CorruptionEngine.VECTOR)
+            {
+                var settingsControl = S.GET<CorruptionEngineForm>();
+                
+                ExtraData = new string[2];
+
+                string lim = ((ComboBoxItem<string>) settingsControl.VectorEngineControl.cbVectorLimiterList.SelectedItem).Name;
+                string val = ((ComboBoxItem<string>) settingsControl.VectorEngineControl.cbVectorValueList.SelectedItem).Name;
+                ExtraData[0] = lim;
+                ExtraData[1] = val;
+            }
+            else if (EngineType == CorruptionEngine.CLUSTER)
+            {
+                var settingsControl = S.GET<CorruptionEngineForm>();
+                ExtraData = new string[1];
+                string lim = ((ComboBoxItem<string>)settingsControl.ClusterEngineControl.cbClusterLimiterList.SelectedItem).Name;
+                ExtraData[0] = lim;
+            }
+
             UpdateCache();
         }
 

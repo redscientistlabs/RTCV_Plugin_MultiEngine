@@ -13,6 +13,8 @@ namespace MultiEngine
 {
     internal static class C
     {
+
+        //Cannot guarantee the index that these will be in, so we assign them
         public static int ClusterEngineIndex    { get; private set; } = 0;
         public static int DistortionEngineIndex { get; private set; } = 1;
         public static int FreezeEngineIndex     { get; private set; } = 2;
@@ -94,6 +96,20 @@ namespace MultiEngine
                 default:
                     return 0;
             }
+        }
+
+
+
+        public static CorruptionEngine IndexToEngine(int index)
+        {
+            if (index == NightmareEngineIndex) return CorruptionEngine.NIGHTMARE;
+            else if (index == HellgenieEngineIndex) return CorruptionEngine.HELLGENIE;
+            else if (index == DistortionEngineIndex) return CorruptionEngine.DISTORTION;
+            else if (index == FreezeEngineIndex) return CorruptionEngine.FREEZE;
+            else if (index == PipeEngineIndex) return CorruptionEngine.PIPE;
+            else if (index == VectorEngineIndex) return CorruptionEngine.VECTOR;
+            else if (index == ClusterEngineIndex) return CorruptionEngine.CLUSTER;
+            else return CorruptionEngine.NONE;
         }
 
 

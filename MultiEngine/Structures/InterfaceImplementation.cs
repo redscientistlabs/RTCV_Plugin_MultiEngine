@@ -24,7 +24,6 @@ namespace MultiEngine.Structures
 
         [Exclude]
         Form ICorruptionEngine.Control { get { return engineForm; } }
-
         [Exclude]
         MultiEngineForm engineForm { get; set; } = null;
 

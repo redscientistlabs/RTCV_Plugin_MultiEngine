@@ -141,7 +141,7 @@ namespace MultiEngine.UI
 
         private void bSave_Click(object sender, EventArgs e)
         {
-            using (SaveFileDialog sfd = new SaveFileDialog() { Filter = "Multi Engine Files|*.me2" })
+            using (SaveFileDialog sfd = new SaveFileDialog() { Filter = "Multi Engine Files|*.men" })
             {
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
@@ -186,14 +186,49 @@ namespace MultiEngine.UI
 
         private void bLoad_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog() {Filter = "Multi Engine Files|*.me2" })
+            using (OpenFileDialog ofd = new OpenFileDialog() {Filter = "Multi Engine Files|*.men" })
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    Pack = saveSerializer.Deserialize<MultiCorruptSettingsPack>(File.ReadAllBytes(ofd.FileName));
-                    //Pack = JsonConvert.DeserializeObject<MultiCorruptSettingsPack>(File.ReadAllText(ofd.FileName));
-                    UpdateList();
-                    PushSettings();
+                    try 
+                    { 
+                        var pack = saveSerializer.Deserialize<MultiCorruptSettingsPack>(File.ReadAllBytes(ofd.FileName));
+
+                        bool ok = true;
+                        List<string> errors = new List<string>();
+
+                        foreach (var item in pack.Settings.Where(x => x.EngineType == CorruptionEngine.VECTOR))
+                        {
+                            //Verify lists
+
+                            var ll = item.CachedSpec[RTCSPEC.VECTOR_LIMITERLISTHASH].ToString();
+                            if (!Filtering.Hash2LimiterDico.ContainsKey(ll))
+                            {
+                                ok = false;
+                                errors.Add(item.ExtraData[0]);
+                            }
+                            var vl = item.CachedSpec[RTCSPEC.VECTOR_VALUELISTHASH].ToString();
+                            if (!Filtering.Hash2LimiterDico.ContainsKey(vl))
+                            {
+                                ok = false;
+                                errors.Add(item.ExtraData[1]);
+                            }
+                        }
+
+                        if (!ok)
+                        {
+                            var errstr = $"Cannot load file {ofd.FileName}, required limiter lists [ {string.Join(", ", errors.Select(x => x + ".txt"))} ] are not loaded in RTC.";
+                            throw new Exception(errstr);
+                        }
+
+                        Pack = pack;
+                        UpdateList();
+                        PushSettings();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"MultiEngine file load error{Environment.NewLine}", ex);
+                    }
                 }
             }
 

@@ -35,6 +35,8 @@ namespace MultiEngine.UI
             this.nmIntensity = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.pDomains = new System.Windows.Forms.Panel();
+            this.imgDomainOverrideInfo = new System.Windows.Forms.PictureBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.tbNewDomain = new System.Windows.Forms.TextBox();
             this.bAddDomain = new System.Windows.Forms.Button();
             this.btnUnselectDomains = new System.Windows.Forms.Button();
@@ -45,10 +47,13 @@ namespace MultiEngine.UI
             this.cbForceIntensity = new System.Windows.Forms.CheckBox();
             this.nmForcedIntensity = new System.Windows.Forms.NumericUpDown();
             this.imgWarning = new System.Windows.Forms.PictureBox();
+            this.imgIntensityInfo = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.nmIntensity)).BeginInit();
             this.pDomains.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imgDomainOverrideInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nmForcedIntensity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgWarning)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgIntensityInfo)).BeginInit();
             this.SuspendLayout();
             // 
             // pSettings
@@ -119,6 +124,8 @@ namespace MultiEngine.UI
             // 
             // pDomains
             // 
+            this.pDomains.Controls.Add(this.imgDomainOverrideInfo);
+            this.pDomains.Controls.Add(this.label3);
             this.pDomains.Controls.Add(this.tbNewDomain);
             this.pDomains.Controls.Add(this.bAddDomain);
             this.pDomains.Controls.Add(this.btnUnselectDomains);
@@ -129,6 +136,27 @@ namespace MultiEngine.UI
             this.pDomains.Size = new System.Drawing.Size(204, 285);
             this.pDomains.TabIndex = 1;
             this.pDomains.Tag = "color:dark1";
+            // 
+            // imgDomainOverrideInfo
+            // 
+            this.imgDomainOverrideInfo.Location = new System.Drawing.Point(184, 2);
+            this.imgDomainOverrideInfo.Name = "imgDomainOverrideInfo";
+            this.imgDomainOverrideInfo.Size = new System.Drawing.Size(15, 16);
+            this.imgDomainOverrideInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgDomainOverrideInfo.TabIndex = 173;
+            this.imgDomainOverrideInfo.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(1, 3);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(141, 13);
+            this.label3.TabIndex = 172;
+            this.label3.Text = "Memory Domain Override:";
             // 
             // tbNewDomain
             // 
@@ -203,11 +231,11 @@ namespace MultiEngine.UI
             this.lbMemoryDomains.ForeColor = System.Drawing.Color.White;
             this.lbMemoryDomains.FormattingEnabled = true;
             this.lbMemoryDomains.IntegralHeight = false;
-            this.lbMemoryDomains.Location = new System.Drawing.Point(3, 3);
+            this.lbMemoryDomains.Location = new System.Drawing.Point(3, 19);
             this.lbMemoryDomains.Name = "lbMemoryDomains";
             this.lbMemoryDomains.ScrollAlwaysVisible = true;
             this.lbMemoryDomains.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.lbMemoryDomains.Size = new System.Drawing.Size(198, 210);
+            this.lbMemoryDomains.Size = new System.Drawing.Size(198, 194);
             this.lbMemoryDomains.TabIndex = 0;
             this.lbMemoryDomains.Tag = "color:dark2";
             // 
@@ -286,12 +314,22 @@ namespace MultiEngine.UI
             this.imgWarning.TabIndex = 171;
             this.imgWarning.TabStop = false;
             // 
+            // imgIntensityInfo
+            // 
+            this.imgIntensityInfo.Location = new System.Drawing.Point(269, 264);
+            this.imgIntensityInfo.Name = "imgIntensityInfo";
+            this.imgIntensityInfo.Size = new System.Drawing.Size(15, 16);
+            this.imgIntensityInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imgIntensityInfo.TabIndex = 174;
+            this.imgIntensityInfo.TabStop = false;
+            // 
             // EngineSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.ClientSize = new System.Drawing.Size(736, 353);
+            this.Controls.Add(this.imgIntensityInfo);
             this.Controls.Add(this.imgWarning);
             this.Controls.Add(this.nmForcedIntensity);
             this.Controls.Add(this.cbForceIntensity);
@@ -311,8 +349,10 @@ namespace MultiEngine.UI
             ((System.ComponentModel.ISupportInitialize)(this.nmIntensity)).EndInit();
             this.pDomains.ResumeLayout(false);
             this.pDomains.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imgDomainOverrideInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nmForcedIntensity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgWarning)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgIntensityInfo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -335,5 +375,8 @@ namespace MultiEngine.UI
         public System.Windows.Forms.CheckBox cbForceIntensity;
         private System.Windows.Forms.NumericUpDown nmForcedIntensity;
         private System.Windows.Forms.PictureBox imgWarning;
+        private System.Windows.Forms.PictureBox imgDomainOverrideInfo;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.PictureBox imgIntensityInfo;
     }
 }
